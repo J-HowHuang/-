@@ -5,6 +5,7 @@ using namespace std;
 
 double threatof(double x0, double y0, int* x, int* y, int* r, int* p, int m);//threat of a point
 double threatof(int** route, int* x, int* y, int* r, int* p);//threat of a route
+double approxCost(int x0, int y0, int* x, int* y, int* r, int* p, int m);
 int main(){
 	int n = 0; //n: size of the map
 	int m = 0; //m: number of threats
@@ -29,10 +30,21 @@ int main(){
 	int endX = 0, endY = 0; //the end point (endX, endY)
 	cin >> startX >> startY >> endX >> endY;
 //a* algorithm	
+	//create openlist(1: open, 0: close)
 	bool** open = new bool* [n];
-	for(int i = 0; i < n; i++)
+	for(int i = 0; i < n; i++){
 		open[i] = new bool [n];
-		return 0;
+		for(int j = 0; j < n; j++)
+			open[i][j] = 0;
+	}
+	//approxCost[i][j] saves the approxCost of point (i, j)
+	double** approxCost = new double* [n];
+	for(int i = 0; i < n; i++)
+		approxCost[i] = new double [n];
+	
+	
+	return 0;
+	
 }
 double threatof(double x0, double y0, int* x, int* y, int* r, int* p, int m){
 	double threat = 0;
@@ -44,4 +56,6 @@ double threatof(double x0, double y0, int* x, int* y, int* r, int* p, int m){
 double threatof(int** route, int* x, int* y, int* r, int* p){
 	
 }
-
+double approxCost(int x0, int y0, int* x, int* y, int* r, int* p, int m){
+	
+}
