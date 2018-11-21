@@ -1,5 +1,6 @@
 //Mid-term Project
 #include<iostream>
+#include<cmath>
 using namespace std;
 
 double threatof(double x0, double y0, int* x, int* y, int* r, int* p, int m);//threat of a point
@@ -27,13 +28,17 @@ int main(){
 	int startX = 0, startY = 0; //the start point (startX, startY)
 	int endX = 0, endY = 0; //the end point (endX, endY)
 	cin >> startX >> startY >> endX >> endY;
-	
+//a* algorithm	
+	bool** open = new bool* [n];
+	for(int i = 0; i < n; i++)
+		open[i] = new bool [n];
+		return 0;
 }
-double threatof(double x0, double y0, int* x, int* y, int* r, int* p){
+double threatof(double x0, double y0, int* x, int* y, int* r, int* p, int m){
 	double threat = 0;
 	
 	for(int i = 0; i < m; i++)
-		if((x0 - x[i]) * (x0 - x[i]) + (y0 - y[i]]) * (y0 - y[i]) < r[i] * r[i])
+		if((x0 - x[i]) * (x0 - x[i]) + (y0 - y[i]) * (y0 - y[i]) < r[i] * r[i])
 			threat += p[i] * (r[i] - sqrt((x0 - x[i])*(x0 - x[i]) + (y0 - y[i])*(y0 - y[i])))/r[i];
 }
 double threatof(int** route, int* x, int* y, int* r, int* p){
