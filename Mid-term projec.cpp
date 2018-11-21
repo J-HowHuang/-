@@ -10,7 +10,8 @@ int main(){
 	int n = 0; //n: size of the map
 	int m = 0; //m: number of threats
 	int w = 0; //w: cost of changing direction
-	int d = 0; //d: the limit of flying distance
+	int d = 0; //d: the limit of flying 
+	const int MAX_CHANGING = 10;
 	cin >> n >> m >> w >> d;
 	
 	int* x = new int [m]; //x[i]: the x-coordinate of the 'i'th threat
@@ -30,18 +31,49 @@ int main(){
 	int endX = 0, endY = 0; //the end point (endX, endY)
 	cin >> startX >> startY >> endX >> endY;
 //a* algorithm	
-	//create openlist(1: open, 0: close)
-	bool** open = new bool* [n];
+	//create openlist(1: open, 0: close, -1: not checked)
+	int** open = new int* [n];
 	for(int i = 0; i < n; i++){
-		open[i] = new bool [n];
+		open[i] = new int [n];
 		for(int j = 0; j < n; j++)
-			open[i][j] = 0;
+			open[i][j] = -1;
 	}
+	
 	//approxCost[i][j] saves the approxCost of point (i, j)
 	double** approxCost = new double* [n];
 	for(int i = 0; i < n; i++)
 		approxCost[i] = new double [n];
 	
+	//route have yet selected
+	int route[MAX_CHANGING + 3][2] = {0};
+	route[1][0] = startX;
+	route[1][1] = startY;
+	route[2][0] = endX;
+	route[2][1] = endY;
+	
+	int openCnt = 1;
+	open[startX][startY] = 1;
+	while(openCnt != 0){
+		//search the point with min. approx cost in the open list
+		int currentX;
+		int currentY;
+		//add it into close list
+		open[currentX][currentY] = 0;
+		//for each point near it
+		for(int i = -1, i <= 1; i++)
+			for(int j = -1; j <= 1; j++){
+				//if it is not in neither open list or close list
+				if(open[currentX + i][currentY + j] == -1){
+					//add it to open list
+					open[currentX + i][currentY + j] = 1;
+					//record the approx cost?
+				}
+				//if it is in open list
+				else if(open[currentX + i][currentY + j] == 1){
+					//consider?
+				}
+			}
+	}
 	
 	return 0;
 	
