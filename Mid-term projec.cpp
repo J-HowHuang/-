@@ -2,6 +2,8 @@
 #include<iostream>
 using namespace std;
 
+double threatof(double x0, double y0, int* x, int* y, int* r, int* p, int m);//threat of a point
+double threatof(int** route, int* x, int* y, int* r, int* p);//threat of a route
 int main(){
 	int n = 0; //n: size of the map
 	int m = 0; //m: number of threats
@@ -27,3 +29,14 @@ int main(){
 	cin >> startX >> startY >> endX >> endY;
 	
 }
+double threatof(double x0, double y0, int* x, int* y, int* r, int* p){
+	double threat = 0;
+	
+	for(int i = 0; i < m; i++)
+		if((x0 - x[i]) * (x0 - x[i]) + (y0 - y[i]]) * (y0 - y[i]) < r[i] * r[i])
+			threat += p[i] * (r[i] - sqrt((x0 - x[i])*(x0 - x[i]) + (y0 - y[i])*(y0 - y[i])))/r[i];
+}
+double threatof(int** route, int* x, int* y, int* r, int* p){
+	
+}
+
