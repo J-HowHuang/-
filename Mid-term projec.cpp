@@ -39,12 +39,7 @@ int main(){
 			open[i][j] = -1;
 	}
 	
-	//route have yet selected
-	int route[MAX_CHANGING + 3][2] = {0};
-	route[1][0] = startX;
-	route[1][1] = startY;
-	route[2][0] = endX;
-	route[2][1] = endY;
+	
 //add start point to open list	
 	int openCnt = 1;
 	open[startX][startY] = 1;
@@ -68,6 +63,8 @@ int main(){
 			source[i][j][1] = startY;
 		}
 	}
+	source[startX][startY][0] = -1;
+	source[startX][startY][1] = -1;
 	
 	while(openCnt != 0){
 		//search the point with min. approx cost in the open list
@@ -95,8 +92,47 @@ int main(){
 					openCnt += 1;
 					source[currentX + i][currentY + j][0] = currentX;
 					source[currentX + i][currentY + j][1] = currentY;
-					f[currentX + i][currentY + j] = threatof
-					//record the approx cost?
+					//calculate the f(t)
+					double minf = 9999999;
+					int nextsourceX = currentX + i;
+					int nextsourceY = currentY + j;
+					int turnCnt = 0;
+					int** tempRoute = new int* [MAX_CHANGING + 3];
+					for(int k = 0; k < MAX_CHANGING + 3; k++){
+						tempRoute[k] = new int[2];
+						tempRoute[k][0] = 0;
+						tempRoute[k][1] = 0;
+					}
+						
+					tempRoute[1][0] = endX;
+					tempRoute[1][1] = endY;
+					while(nextsourceX != -1){
+						tempRoute[turnCnt + 2][0] = nextsourceX;
+						tempRoute[turnCnt + 2][1] = nextsourceY;
+						turnCnt += 1;
+						tempRoute[0][0] += 1;
+						tempRoute[0][1] += 1;
+						tempX = source[nextsourceX][nextsourceY][0];
+						tempY = source[nextsourceX][nextsourceY][1];
+						nextsourceX = tempX;
+						nextsourceY = tempY;
+					}
+					turnCnt -= 1;
+					tempRoute[0][0] -= 1;
+					tempRoute[0][1] -= 1;
+					int** route = new int* [MAX_CHANGING + 3];
+					for(int k = 0; k < MAX_CHANGING + 3; k++){
+						route[k] = new int [2];
+						route[k][0] = 0;
+						route[k][1] = 0;
+					}
+					route[0][0] = tempRoute[0][0];
+					route[0][1] = tempRoute[0][1];
+					for(int k = 0; k < turnCnt + 2; k++){
+						route[k + 1][0] = tempRoute[turnCnt + 2 - k][0];
+						route[k + 1][1] = tempRoute[turnCnt + 2 - k][1];
+					}
+					for(int k = 0; 
 				}
 				//if it is in open list 
 				else if(open[currentX + i][currentY + j] == 1){
