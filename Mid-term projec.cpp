@@ -10,7 +10,7 @@ int main(){
 	int n = 0; //n: size of the map
 	int m = 0; //m: number of threats
 	int w = 0; //w: cost of changing direction
-	int d = 0; //d: the limit of flying 
+	int d = 0; //d: the limit of flying distance
 	const int MAX_CHANGING = 10;
 	cin >> n >> m >> w >> d;
 	
@@ -26,7 +26,7 @@ int main(){
 		cin >> r[i];
 	for(int i = 0; i < m; i++)
 		cin >> p[i];
-	
+
 	int startX = 0, startY = 0; //the start point (startX, startY)
 	int endX = 0, endY = 0; //the end point (endX, endY)
 	cin >> startX >> startY >> endX >> endY;
@@ -53,6 +53,23 @@ int main(){
 	
 	int openCnt = 1;
 	open[startX][startY] = 1;
+	
+	//f[][] is the min. approx cost of a point
+	double** f = new double* [n];
+	for(int i = 0; i < n; i++){
+		f[i] = new double [n];
+		for(int j = 0; j < n; j++)
+			f[i][j] = -1;
+	}
+	int*** source = new int** [n];
+	for(int i = 0; i < n; i++){
+		source[i] = new int*[n];
+		for(int j = 0; j < n; j++){
+			source[i][j] = new int[2];
+			source[i][j][0] = 0;
+			source[i][j][1] = 0;
+		}
+	}
 	while(openCnt != 0){
 		//search the point with min. approx cost in the open list
 		int currentX;
@@ -66,13 +83,16 @@ int main(){
 				if(open[currentX + i][currentY + j] == -1){
 					//add it to open list
 					open[currentX + i][currentY + j] = 1;
+					openCnt += 1;
 					//record the approx cost?
 				}
-				//if it is in open list
+				//if it is in open list 
 				else if(open[currentX + i][currentY + j] == 1){
 					//consider?
 				}
 			}
+		if(open[endX][endY] == 0)
+			break;
 	}
 	
 	return 0;
