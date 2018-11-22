@@ -4,7 +4,7 @@
 using namespace std;
 
 double threatof(double x0, double y0, int* x, int* y, int* r, int* p, int m);//threat of a point
-double threatof(int** route, int* x, int* y, int* r, int* p);//threat of a route
+double threatof(int** route, int* x, int* y, int* r, int* p, int m);//threat of a route
 double approxCost(int x0, int y0, int* x, int* y, int* r, int* p, int m);
 int main(){
 	int n = 0; //n: size of the map
@@ -39,18 +39,13 @@ int main(){
 			open[i][j] = -1;
 	}
 	
-	//approxCost[i][j] saves the approxCost of point (i, j)
-	double** approxCost = new double* [n];
-	for(int i = 0; i < n; i++)
-		approxCost[i] = new double [n];
-	
 	//route have yet selected
 	int route[MAX_CHANGING + 3][2] = {0};
 	route[1][0] = startX;
 	route[1][1] = startY;
 	route[2][0] = endX;
 	route[2][1] = endY;
-	
+//add start point to open list	
 	int openCnt = 1;
 	open[startX][startY] = 1;
 	
@@ -61,19 +56,33 @@ int main(){
 		for(int j = 0; j < n; j++)
 			f[i][j] = -1;
 	}
+	f[startX][startY] = threatof(route, x, y, r, p);
+	
+	//source[][][0] is the x coordinate of the source of the point, while 1 is y
 	int*** source = new int** [n];
 	for(int i = 0; i < n; i++){
 		source[i] = new int*[n];
 		for(int j = 0; j < n; j++){
 			source[i][j] = new int[2];
-			source[i][j][0] = 0;
-			source[i][j][1] = 0;
+			source[i][j][0] = startX;
+			source[i][j][1] = startY;
 		}
 	}
+	
 	while(openCnt != 0){
 		//search the point with min. approx cost in the open list
 		int currentX;
 		int currentY;
+		double minf = 9999999
+		for(int i = 0; i < n; i++)//still need modified
+			for(int j = 0; j < n; j++)
+				if(open[i][j] == 1)
+					if(f[i][j] < minf && f[i][j] > 0){
+						minf = f[i][j];
+						currentX = i;
+						currentY = j;
+					}
+ 
 		//add it into close list
 		open[currentX][currentY] = 0;
 		//for each point near it
@@ -84,6 +93,9 @@ int main(){
 					//add it to open list
 					open[currentX + i][currentY + j] = 1;
 					openCnt += 1;
+					source[currentX + i][currentY + j][0] = currentX;
+					source[currentX + i][currentY + j][1] = currentY;
+					f[currentX + i][currentY + j] = threatof
 					//record the approx cost?
 				}
 				//if it is in open list 
