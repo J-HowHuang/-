@@ -124,3 +124,18 @@ double approxCost(int x0, int y0, int* x, int* y, int* r, int* p, int m){
     
 	
 }
+void insertf(int **route,int x,int y, int endX,int enddY)
+{
+    for(int i = 0 ; i < MAX_CHANGING + 3 ; i++ )
+    {
+        if( ( route[i][0] == endX ) && ( route[i][1] == endY) )
+        {
+            route[i + 1][0] = route[i][0];
+            route[i + 1][1] = route[i][1];
+            route[i][0] = x;
+            route[i][1] = y;
+            break;
+        }
+    }
+    
+}
