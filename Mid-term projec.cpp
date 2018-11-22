@@ -11,7 +11,7 @@ using namespace std;
 */
 
 double threatof(double x0, double y0, int* x, int* y, int* r, int* p, int m);//threat of a point
-double threatof(int** route, int* x, int* y, int* r, int* p, int m);//threat of a route
+double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w);//threat of a route
 double length(int startX, int startY, int endX, int endY);
 double approxCost(int x0, int y0, int* x, int* y, int* r, int* p, int m);
 const int MAX_N = 1000;
@@ -99,9 +99,14 @@ double threatof(double x0, double y0, int* x, int* y, int* r, int* p, int m){
 		if((x0 - x[i]) * (x0 - x[i]) + (y0 - y[i]) * (y0 - y[i]) < r[i] * r[i])
 			threat += p[i] * (r[i] - sqrt((x0 - x[i])*(x0 - x[i]) + (y0 - y[i])*(y0 - y[i])))/r[i];
 }
-double threatof(int** route, int* x, int* y, int* r, int* p, int m){
+double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w){
 	double leftLen = 0, threat = 0;
+	int corner = 0;
 	for(int i = 1; i <= (route[0][0] + 1); i++){
+		if(i > 1){
+			bool corTemp = turnOrNot(route[i - 1][0], route[i - 1][1], route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
+			corner += corTemp;
+		}
 		double len = length(route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
 		double cmpntX = sqrt(pow((route[i + 1][0] - route[i][0]), 2));
 		double cmpntY = sqrt(pow((route[i + 1][1] - route[i][1]), 2));
@@ -116,6 +121,7 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m){
 		}
 		leftLen = 0;
 	}
+	threat += w * corner;
 	return threat;
 }
 double length(int startX, int startY, int endX, int endY){
