@@ -89,5 +89,6 @@ double threatof(int** route, int* x, int* y, int* r, int* p){
 	
 }
 double approxCost(int x0, int y0, int* x, int* y, int* r, int* p, int m){
+    
 	
 }
