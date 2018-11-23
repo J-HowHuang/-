@@ -4,7 +4,7 @@
 using namespace std;
 
 double threatofP(double x0, double y0, int* x, int* y, int* r, int* p, int m);//threat of a point
-double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w);//threat of a route
+double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t);//threat of a route
 double length(int startX, int startY, int endX, int endY);
 bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int endY );
 void insertf(int **route,int x,int y, int endX,int endY);
@@ -64,14 +64,10 @@ int main(){
 	originRoute[1][1] = startY;
 	originRoute[2][0] = endX;
 	originRoute[2][1] = endY;
-<<<<<<< HEAD
+
 	f[startX][startY] = threatof(originRoute, x, y, r, p, m, w, 0);
 	cout << threatof(originRoute, x, y, r, p, m, w, 0) << "\n";
 
-=======
-	f[startX][startY] = threatof(originRoute, x, y, r, p, m, w);
-	cout << threatof(originRoute, x, y, r, p, m, w) << "\n";
->>>>>>> parent of e824eaa... Merge branch 'master' of https://github.com/J-HowHuang/-
 	
 	//source[][][0] is the x coordinate of the source of the point, while 1 is y
 	int*** source = new int** [n];
@@ -142,7 +138,6 @@ int main(){
 					turnCnt -= 1;
 					tempRoute[0][0] -= 1;
 					tempRoute[0][1] -= 1;
-					
 					//reverse the temp route to get the route in correct order
 					int** route = new int* [MAX_CHANGING + 3];
 					for(int k = 0; k < MAX_CHANGING + 3; k++){
@@ -160,9 +155,9 @@ int main(){
 					//if point t has better performance pass through former turn point straightly, update the source
 					for(int k = 0; k < turnCnt; k++){
 						cout << k;
-						cout << threatof(route, x, y, r, p, m, k);
-						if(threatof(route, x, y, r, p, m, k) < f[currentX + i][currentY + j]){
-							f[currentX + i][currentY + j] = threatof(route, x, y, r, p, m, k);
+						cout << threatof(route, x, y, r, p, m, w, k);
+						if(threatof(route, x, y, r, p, m, w, k) < f[currentX + i][currentY + j]){
+							f[currentX + i][currentY + j] = threatof(route, x, y, r, p, m, w, k);
 							source[currentX + i][currentY + j][0] = route[turnCnt - k][0];
 							source[currentX + i][currentY + j][1] = route[turnCnt - k][1];
 						}
@@ -225,7 +220,7 @@ int main(){
 		cout << route[i + 1][0] << " " << route[i + 1][1] << " ";
 	}
 	cout << route[turnCnt + 2][0] << " " << route[turnCnt + 2][1] << " ";
-	cout << threatof(route, x, y, r, p, m, 0);
+	cout << threatof(route, x, y, r, p, m, w, 0);
 	return 0;
 	
 }
@@ -236,10 +231,10 @@ double threatofP(double x0, double y0, int* x, int* y, int* r, int* p, int m){
 		if((x0 - x[i]) * (x0 - x[i]) + (y0 - y[i]) * (y0 - y[i]) < r[i] * r[i])
 			threat += p[i] * (r[i] - sqrt((x0 - x[i])*(x0 - x[i]) + (y0 - y[i])*(y0 - y[i])))/r[i];
 }
-double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w){
+double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t){
 	double leftLen = 0, threat = 0;
 	int corner = 0;
-	for(int i = 1; i <= (route[0][0] + 1); i++){
+	for(int i = 1; i <= (route[0][0] + 1) - t; i++){
 		if(i > 1){
 			bool corTemp = turnOrNot(route[i - 1][0], route[i - 1][1], route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
 			corner += corTemp;
