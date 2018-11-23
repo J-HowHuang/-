@@ -13,6 +13,7 @@ using namespace std;
 double threatof(double x0, double y0, int* x, int* y, int* r, int* p, int m);//threat of a point
 double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w);//threat of a route
 double length(int startX, int startY, int endX, int endY);
+bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int endY );
 double approxCost(int x0, int y0, int* x, int* y, int* r, int* p, int m);
 const int MAX_N = 1000;
 
@@ -128,6 +129,11 @@ double length(int startX, int startY, int endX, int endY){
 	double distance = 0;
 	distance = (sqrt(pow((endX - startX), 2) + pow((endY - startY), 2)));
 	return distance;
+}
+bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int endY ){
+	if((nowY - startY / nowX - startX  ) == (endY - nowY / endX - nowX ))
+		return true ;
+	return false ;
 }
 double approxCost(int x0, int y0, int* x, int* y, int* r, int* p, int m){
 	
