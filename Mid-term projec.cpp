@@ -64,8 +64,8 @@ int main(){
 	originRoute[1][1] = startY;
 	originRoute[2][0] = endX;
 	originRoute[2][1] = endY;
-	f[startX][startY] = threatof(originRoute, x, y, r, p, m, 0);
-	cout << threatof(originRoute, x, y, r, p, m, 0) << "\n";
+	f[startX][startY] = threatof(originRoute, x, y, r, p, m, w);
+	cout << threatof(originRoute, x, y, r, p, m, w) << "\n";
 	
 	//source[][][0] is the x coordinate of the source of the point, while 1 is y
 	int*** source = new int** [n];
