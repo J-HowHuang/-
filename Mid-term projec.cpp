@@ -67,8 +67,8 @@ int main(){
 	originRoute[1][1] = startY;
 	originRoute[2][0] = endX;
 	originRoute[2][1] = endY;
-	f[startX][startY] = threatof(originRoute, x, y, r, p, m, w);
-	cout << threatof(originRoute, x, y, r, p, m, w) << "\n";
+	f[startX][startY] = threatof(originRoute, x, y, r, p, m, w, 0);
+	cout << threatof(originRoute, x, y, r, p, m, w, 0) << "\n";
 
 	
 	int openCnt = 1;
@@ -82,10 +82,6 @@ int main(){
 		//for each point near it
 		for(int i = -1; i <= 1; i++)
 			for(int j = -1; j <= 1; j++){
-				if(currentX + i < 0 || currentY + j < 0)
-					continue;
-				else if(currentX + i > n || currentY + j > n)
-					continue;
 				//if it is not in neither open list or close list
 				if(open[currentX + i][currentY + j] == -1){
 					//add it to open list
@@ -118,8 +114,8 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
 			corner += corTemp;
 		}
 		double len = length(route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
-		double cmpntX = sqrt(pow((route[i + 1][0] - route[i][0]), 2));
-		double cmpntY = sqrt(pow((route[i + 1][1] - route[i][1]), 2));
+		double cmpntX = (route[i + 1][0] - route[i][0]);
+		double cmpntY = (route[i + 1][1] - route[i][1]);
 		int intLen = static_cast<int>(len);
 		leftLen = len - intLen;
 		double tempX = route[i][0];
