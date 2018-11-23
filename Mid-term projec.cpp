@@ -100,6 +100,10 @@ int main(){
 		//for each point near it
 		for(int i = -1; i <= 1; i++)
 			for(int j = -1; j <= 1; j++){
+				if(currentX + i < 0 || currentY + j < 0)
+					continue;
+				else if(currentX + i > n || currentY + j > n)
+					continue;
 				//if it is not in neither open list or close list
 				if(open[currentX + i][currentY + j] == -1){
 					//add it to open list
