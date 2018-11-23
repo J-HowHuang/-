@@ -246,7 +246,7 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
 		leftLen = len - intLen;
 		double tempX = route[i][0];
 		double tempY = route[i][1];
-		for(int k = 1; k < intLen ; k++){
+		for(int k = 1; k <= intLen ; k++){
 			tempX += cmpntX / len;
 			tempY += cmpntY / len;
 			threat += threatofP(tempX, tempY, x, y, r, p, m);
@@ -262,7 +262,7 @@ double length(int startX, int startY, int endX, int endY){
 	return distance;
 }
 bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int endY ){
-	if((nowY - startY / nowX - startX  ) == (endY - nowY / endX - nowX ))
+	if((nowY - startY / nowX - startX  ) == (endY - nowY / endX - nowX ) && (nowY - startY) * (endY - nowY) > 0)
 		return true ;
 	return false ;
 }
