@@ -4,12 +4,6 @@
 #include <iomanip>
 using namespace std;
 
-/*
-// PSEUDOCODE OF ThreatOfRoute
-	
-	
-*/
-
 double threatof(double x0, double y0, int* x, int* y, int* r, int* p, int m);//threat of a point
 double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w);//threat of a route
 double length(int startX, int startY, int endX, int endY);
