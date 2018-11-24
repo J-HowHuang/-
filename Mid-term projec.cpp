@@ -232,9 +232,11 @@ double threatofP(double x0, double y0, int* x, int* y, int* r, int* p, int m){
 	return threat;
 }
 double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t){
+	cout << "\nFunction is called.";//
 	double leftLen = 0, threat = 0;
 	int corner = 0;
-	for(int i = 1; i <= (route[0][0] + 1 - t); i++){
+	for(int i = 1; i <= (route[0][0] - t) || i == (route[0][0] + 1 - t); i++){
+		cout << "\n i is " << i;//
 		if(i > 1){
 			bool corTemp = turnOrNot(route[i - 1][0], route[i - 1][1], route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
 			corner += corTemp;
@@ -257,6 +259,11 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
 			tempY += cmpntY / len;
 			threat += threatofP(tempX, tempY, x, y, r, p, m);
 		}
+		if(i == (route[0][0] - t)){
+			i = route[0][0];
+			//cout << "\nroute[0][0] is " << route[0][0];//
+		}
+		//cout << "\ni is " << i;//
 	}
 	threat += w * corner;
 	return threat;
