@@ -89,21 +89,27 @@ int main(){
 		double minf = 99999999;
 		for(int i = 0; i < n; i++)//still need modified
 			for(int j = 0; j < n; j++)
-				if(open[i][j] == 1)
+				if(open[i][j] == 1){
+				//	cout << "(" << i << ", " << j << "): " << f[i][j] << "\n";
 					if(f[i][j] < minf){
 						minf = f[i][j];
 						currentX = i;
 						currentY = j;
 					}
- 		cout << "find the min in open\n";
+				}
+					
+ 		cout << "current position: (" << currentX << ", " << currentY << ")\n";
 		//add it into close list
 		open[currentX][currentY] = 0;
 		openCnt -= 1;
 		//for each point near it
 		for(int i = -1; i <= 1; i++)
 			for(int j = -1; j <= 1; j++){
-				cout << "neighbor: " << 3*i+j+5 << "\n";
 				//if it is not in neither open list or close list
+				if(currentX + i < 0 || currentY + j < 0)
+					continue;
+				if(currentX + i > n || currentY + j > n)
+					continue;
 				if(open[currentX + i][currentY + j] == -1){
 					//add it to open list
 					open[currentX + i][currentY + j] = 1;
@@ -152,9 +158,7 @@ int main(){
 					}
 					//if point t has better performance pass through former turn point straightly, update the source
 					for(int k = 0; k < turnCnt; k++){
-						cout << k << "\n";
 						double threatofRoute = threatof(route, x, y, r, p, m, w, k);
-						cout << threatofRoute << "\n";
 						if(threatofRoute < f[currentX + i][currentY + j]){
 							f[currentX + i][currentY + j] = threatofRoute;
 							source[currentX + i][currentY + j][0] = route[turnCnt - k][0];
@@ -165,7 +169,6 @@ int main(){
 				}
 				//if it is in open list 
 				else if(open[currentX + i][currentY + j] == 1){
-					//consider?
 				}
 			}
 		if(open[endX][endY] == 0)
@@ -243,10 +246,9 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
 		double cmpntY = (route[i + 1][1] - route[i][1]);
 		double tempX = route[i][0];
 		double tempY = route[i][1];
-		if(leftLen != 0){
+		if(abs(leftLen) > 0.0001){
 			tempX += cmpntX / len * (1 - leftLen);
 			tempY += cmpntY / len * (1 - leftLen);
-			cout << tempX << " " << tempY << " " << threatofP(tempX, tempY, x, y, r, p, m) << "\n";
 			threat += threatofP(tempX, tempY, x, y, r, p, m);
 		}
 		int intLen = static_cast<int>(len - leftLen);
@@ -254,7 +256,6 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
 		for(int k = 0; k < intLen ; k++){
 			tempX += cmpntX / len;
 			tempY += cmpntY / len;
-			cout << tempX << " " << tempY << " " << threatofP(tempX, tempY, x, y, r, p, m) << "\n";
 			threat += threatofP(tempX, tempY, x, y, r, p, m);
 		}
 	}
@@ -267,7 +268,7 @@ double length(int startX, int startY, int endX, int endY){
 	return distance;
 }
 bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int endY ){
-	if(((nowY - startY) / (nowX - startX)) == ((endY - nowY) / (endX - nowX)) && (nowY - startY) * (endY - nowY) > 0)
+	if(((nowY - startY) * (endX - nowX)) == ((endY - nowY) * (nowX - startX)) && (nowY - startY) * (endY - nowY) > 0)
 		return true ;
 	return false ;
 }
