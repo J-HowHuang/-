@@ -158,7 +158,7 @@ int main(){
 					//if point t has better performance pass through former turn point straightly, update the source
 					for(int k = 0; k < turnCnt; k++){
 						double threatofRoute = threatof(route, x, y, r, p, m, w, k);
-					//	cout << "if ignore " << k << " corner " << threatofRoute << "\n";
+						cout << "if ignore " << k << " corner " << threatofRoute << "\n";
 						if(threatofRoute < f[currentX + i][currentY + j]){
 							f[currentX + i][currentY + j] = threatofRoute;
 							source[currentX + i][currentY + j][0] = route[turnCnt - k][0];
@@ -232,11 +232,9 @@ double threatofP(double x0, double y0, int* x, int* y, int* r, int* p, int m){
 	return threat;
 }
 double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t){
-	cout << "\nFunction is called.";//
 	double leftLen = 0, threat = 0;
 	int corner = 0;
 	for(int i = 1; i <= (route[0][0] - t) || i == (route[0][0] + 1 - t); i++){
-		cout << "\n i is " << i;//
 		if(i > 1){
 			bool corTemp = turnOrNot(route[i - 1][0], route[i - 1][1], route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
 			corner += corTemp;
