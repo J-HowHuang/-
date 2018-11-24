@@ -234,24 +234,30 @@ double threatofP(double x0, double y0, int* x, int* y, int* r, int* p, int m){
 double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t){
 	double leftLen = 0, threat = 0;
 	int corner = 0;
-	for(int i = 1; i <= (route[0][0] + 1) - t; i++){
+	for(int i = 1; i <= (route[0][0] + 1 - t); i++){
+		cout << "i = " << i;
 		if(i > 1){
 			bool corTemp = turnOrNot(route[i - 1][0], route[i - 1][1], route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
 			corner += corTemp;
 		}
 		double len = length(route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
-		double cmpntX = (route[i + 1][0] - route[i][0]);
+		double cmpntX = (route[i + 1][0] - route[i][0]);//culculate x component 
 		double cmpntY = (route[i + 1][1] - route[i][1]);
-		int intLen = static_cast<int>(len);
-		leftLen = len - intLen;
 		double tempX = route[i][0];
 		double tempY = route[i][1];
-		for(int k = 1; k <= intLen ; k++){
-			tempX += cmpntX / len;
-			tempY += cmpntY / len;
+		if(leftLen != 0){
+			tempX += cmpntX / (1 - leftLen);
+			tempY += cmpntY / (1 - leftLen);
 			threat += threatofP(tempX, tempY, x, y, r, p, m);
 		}
-		leftLen = 0;
+		int intLen = static_cast<int>(len - leftLen);
+		leftLen = len - intLen - leftLen;
+		for(int k = 0; k < intLen ; k++){
+			tempX += cmpntX / len;
+			tempY += cmpntY / len;
+			cout << tempX << " " << tempY << "\n";
+			threat += threatofP(tempX, tempY, x, y, r, p, m);
+		}
 	}
 	threat += w * corner;
 	return threat;
