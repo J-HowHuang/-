@@ -82,7 +82,7 @@ int main(){
 	source[startX][startY][0] = -1;
 	source[startX][startY][1] = -1;
 	cout << "process 1 done\n";
-	while(openCnt != 0){
+	while(true){
 		//search the point with min. approx cost in the open list
 		int currentX;
 		int currentY;
@@ -90,7 +90,7 @@ int main(){
 		for(int i = 0; i < n; i++)//still need modified
 			for(int j = 0; j < n; j++)
 				if(open[i][j] == 1){
-				//	cout << "(" << i << ", " << j << "): " << f[i][j] << "\n";
+					cout << "(" << i << ", " << j << ") f: " << f[i][j] << " source: (" << source[i][j][0] << ", " << source[i][j][1] << ")\n";
 					if(f[i][j] < minf){
 						minf = f[i][j];
 						currentX = i;
@@ -110,10 +110,9 @@ int main(){
 					continue;
 				if(currentX + i > n || currentY + j > n)
 					continue;
-				if(open[currentX + i][currentY + j] == -1){
+				if(open[currentX + i][currentY + j] != 0){
 					//add it to open list
 					open[currentX + i][currentY + j] = 1;
-					openCnt += 1;
 					source[currentX + i][currentY + j][0] = currentX;
 					source[currentX + i][currentY + j][1] = currentY;
 					//calculate the f(t)
@@ -159,6 +158,7 @@ int main(){
 					//if point t has better performance pass through former turn point straightly, update the source
 					for(int k = 0; k < turnCnt; k++){
 						double threatofRoute = threatof(route, x, y, r, p, m, w, k);
+					//	cout << "if ignore " << k << " corner " << threatofRoute << "\n";
 						if(threatofRoute < f[currentX + i][currentY + j]){
 							f[currentX + i][currentY + j] = threatofRoute;
 							source[currentX + i][currentY + j][0] = route[turnCnt - k][0];
@@ -168,8 +168,7 @@ int main(){
 					
 				}
 				//if it is in open list 
-				else if(open[currentX + i][currentY + j] == 1){
-				}
+				
 			}
 		if(open[endX][endY] == 0)
 			break;
