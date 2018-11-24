@@ -8,7 +8,7 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
 double length(int startX, int startY, int endX, int endY);
 bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int endY );
 void insertf(int **route,int x,int y, int endX,int endY);
-const int MAX_CHANGING = 10;
+const int MAX_CHANGING = 100;
 int main(){
 	int n = 0; //n: size of the map
 	int m = 0; //m: number of threats
@@ -35,10 +35,10 @@ int main(){
 	cout << "input done\n";
 //a* algorithm	
 	//create openlist(1: open, 0: close, -1: not checked)
-	int** open = new int* [n];
-	for(int i = 0; i < n; i++){
-		open[i] = new int [n];
-		for(int j = 0; j < n; j++)
+	int** open = new int* [n + 1];
+	for(int i = 0; i < n + 1; i++){
+		open[i] = new int [n + 1];
+		for(int j = 0; j < n + 1; j++)
 			open[i][j] = -1;
 	}
 	
@@ -48,10 +48,10 @@ int main(){
 	open[startX][startY] = 1;
 	
 	//f[][] is the min. approx cost of a point
-	double** f = new double* [n];
-	for(int i = 0; i < n; i++){
-		f[i] = new double [n];
-		for(int j = 0; j < n; j++)
+	double** f = new double* [n + 1];
+	for(int i = 0; i < n + 1; i++){
+		f[i] = new double [n + 1];
+		for(int j = 0; j < n + 1; j++)
 			f[i][j] = INFINITY;
 	}
 	int** originRoute = new int* [3];
@@ -70,10 +70,10 @@ int main(){
 
 	
 	//source[][][0] is the x coordinate of the source of the point, while 1 is y
-	int*** source = new int** [n];
-	for(int i = 0; i < n; i++){
+	int*** source = new int** [n + 1];
+	for(int i = 0; i < n + 1; i++){
 		source[i] = new int*[n];
-		for(int j = 0; j < n; j++){
+		for(int j = 0; j < n + 1; j++){
 			source[i][j] = new int[2];
 			source[i][j][0] = startX;
 			source[i][j][1] = startY;
