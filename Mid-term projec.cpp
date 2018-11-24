@@ -238,6 +238,7 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
 			corner += corTemp;
 		}
 		double len = length(route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
+
 		double cmpntX = (route[i + 1][0] - route[i][0]);//culculate x component 
 		double cmpntY = (route[i + 1][1] - route[i][1]);
 		double tempX = route[i][0];
