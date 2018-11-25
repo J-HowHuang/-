@@ -87,8 +87,8 @@ int main(){
 		int currentX;
 		int currentY;
 		double minf = 99999999;
-		for(int i = 0; i < n; i++)//still need modified
-			for(int j = 0; j < n; j++)
+		for(int i = 0; i < n + 1; i++)//still need modified
+			for(int j = 0; j < n + 1; j++)
 				if(open[i][j] == 1){
 				//	cout << "(" << i << ", " << j << ") f: " << f[i][j] << " source: (" << source[i][j][0] << ", " << source[i][j][1] << ")\n";
 					if(f[i][j] < minf){
@@ -160,7 +160,7 @@ int main(){
 						double threatofRoute = threatof(route, x, y, r, p, m, w, k);
 					//	cout << "if ignore " << k << " corner " << threatofRoute << "\n";
 						if(threatofRoute < f[currentX + i][currentY + j]){
-							f[currentX + i][currentY + j] = threatofRoute;
+							f[currentX + i][currentY + j] = threatofRoute + length(currentX + i, currentY + j, endX, endY) / n / n;
 							source[currentX + i][currentY + j][0] = route[turnCnt - k][0];
 							source[currentX + i][currentY + j][1] = route[turnCnt - k][1];
 						}
