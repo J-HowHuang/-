@@ -243,24 +243,29 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
             continue;
         }
         //
-        if(i > 1)
+        
+        if( ( i = route[0][0] - t ) )
         {
-            if( ( i = route[0][0] - t ) )
+            if(i > 1)
             {
                 bool corTemp = turnOrNot(route[i - 1][0], route[i - 1][1], route[i][0], route[i][1], route[route[0][0] + 1][0], route[route[0][0] + 1][1]);
                 corner += corTemp;
-                len = length(route[i][0], route[i][1], route[route[0][0] + 1][0], route[route[0][0] + 1][1]);
-                cmpntX = (route[route[0][0]+ 1][0] - route[i][0]);//culculate x component
-                cmpntY = (route[route[0][0] + 1][1] - route[i][1]);
             }
-            else
+            
+            len = length(route[i][0], route[i][1], route[route[0][0] + 1][0], route[route[0][0] + 1][1]);
+            cmpntX = (route[route[0][0]+ 1][0] - route[i][0]);//culculate x component
+            cmpntY = (route[route[0][0] + 1][1] - route[i][1]);
+        }
+        else
+        {
+            if(i > 1)
             {
                 bool corTemp = turnOrNot(route[i - 1][0], route[i - 1][1], route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
                 corner += corTemp;
-                len = length(route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
-                cmpntX = (route[i + 1][0] - route[i][0]);//culculate x component
-                cmpntY = (route[i + 1][1] - route[i][1]);
             }
+            len = length(route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
+            cmpntX = (route[i + 1][0] - route[i][0]);//culculate x component
+            cmpntY = (route[i + 1][1] - route[i][1]);
         }
         
         //
