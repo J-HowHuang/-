@@ -232,39 +232,62 @@ double threatofP(double x0, double y0, int* x, int* y, int* r, int* p, int m){
 	return threat;
 }
 double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t){
-	double leftLen = 0, threat = 0;
-	int corner = 0;
-	for(int i = 1; i <= (route[0][0] - t) || i == (route[0][0] + 1 - t); i++){
-		if(i > 1){
-			bool corTemp = turnOrNot(route[i - 1][0], route[i - 1][1], route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
-			corner += corTemp;
-		}
-		double len = length(route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
-
-		double cmpntX = (route[i + 1][0] - route[i][0]);//culculate x component 
-		double cmpntY = (route[i + 1][1] - route[i][1]);
-		double tempX = route[i][0];
-		double tempY = route[i][1];
-		if(abs(leftLen) > 0.0001){
-			tempX += cmpntX / len * (1 - leftLen);
-			tempY += cmpntY / len * (1 - leftLen);
-			threat += threatofP(tempX, tempY, x, y, r, p, m);
-		}
-		int intLen = static_cast<int>(len - leftLen);
-		leftLen = len - intLen - leftLen;
-		for(int k = 0; k < intLen ; k++){
-			tempX += cmpntX / len;
-			tempY += cmpntY / len;
-			threat += threatofP(tempX, tempY, x, y, r, p, m);
-		}
-		if(i == (route[0][0] - t)){
-			i = route[0][0];
-			//cout << "\nroute[0][0] is " << route[0][0];//
-		}
-		//cout << "\ni is " << i;//
-	}
-	threat += w * corner;
-	return threat;
+    double leftLen = 0, threat = 0;
+    int corner = 0;
+    double len = 0;
+    double cmpntX = 0;//culculate x component
+    double cmpntY = 0;
+    for(int i = 1; i <= ( route[0][0] + 1 ) ; i++){
+        if( (i > ( route[0][0] - t ) ) && ( i < ( route[0][0] + 1 ) ) )
+        {
+            continue;
+        }
+        //
+        if(i > 1)
+        {
+            if( ( i = route[0][0] - t ) )
+            {
+                bool corTemp = turnOrNot(route[i - 1][0], route[i - 1][1], route[i][0], route[i][1], route[route[0][0] + 1][0], route[route[0][0] + 1][1]);
+                corner += corTemp;
+                len = length(route[i][0], route[i][1], route[route[0][0] + 1][0], route[route[0][0] + 1][1]);
+                cmpntX = (route[route[0][0]+ 1][0] - route[i][0]);//culculate x component
+                cmpntY = (route[route[0][0] + 1][1] - route[i][1]);
+            }
+            else
+            {
+                bool corTemp = turnOrNot(route[i - 1][0], route[i - 1][1], route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
+                corner += corTemp;
+                len = length(route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
+                cmpntX = (route[i + 1][0] - route[i][0]);//culculate x component
+                cmpntY = (route[i + 1][1] - route[i][1]);
+            }
+        }
+        
+        //
+        
+        
+        double tempX = route[i][0];
+        double tempY = route[i][1];
+        if(abs(leftLen) > 0.0001){
+            tempX += cmpntX / len * (1 - leftLen);
+            tempY += cmpntY / len * (1 - leftLen);
+            threat += threatofP(tempX, tempY, x, y, r, p, m);
+        }
+        int intLen = static_cast<int>(len - leftLen);
+        leftLen = len - intLen - leftLen;
+        for(int k = 0; k < intLen ; k++){
+            tempX += cmpntX / len;
+            tempY += cmpntY / len;
+            threat += threatofP(tempX, tempY, x, y, r, p, m);
+        }
+        if(i == (route[0][0] - t)){
+            i = route[0][0];
+            //cout << "\nroute[0][0] is " << route[0][0];//
+        }
+        //cout << "\ni is " << i;//
+    }
+    threat += w * corner;
+    return threat;
 }
 double length(int startX, int startY, int endX, int endY){
 	double distance = 0;
