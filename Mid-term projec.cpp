@@ -8,6 +8,7 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
 double length(int startX, int startY, int endX, int endY);
 bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int endY );
 void insertf(int **route,int x,int y, int endX,int endY);
+void newRoute(int** route, int* x, int* y, int* r, int* p, int m, int w, int t);
 const int MAX_CHANGING = 100;
 int main(){
 	int n = 0; //n: size of the map
@@ -224,8 +225,7 @@ int main(){
 	
 }
 double threatofP(double x0, double y0, int* x, int* y, int* r, int* p, int m){
-	double threat = 0;
-	
+	double threat = 0;	
 	for(int i = 0; i < m; i++)
 		if((x0 - x[i]) * (x0 - x[i]) + (y0 - y[i]) * (y0 - y[i]) < r[i] * r[i])
 			threat += p[i] * (r[i] - sqrt((x0 - x[i])*(x0 - x[i]) + (y0 - y[i])*(y0 - y[i])))/r[i];
@@ -233,6 +233,8 @@ double threatofP(double x0, double y0, int* x, int* y, int* r, int* p, int m){
 }
 double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t){
 	cout << "\nFunction is called.";//
+	if(t != 0)
+		newRoute(route, x, y, r, p, m, w, t);
 	double leftLen = 0, threat = 0;
 	int corner = 0;
 	for(int i = 1; i <= (route[0][0] - t) || i == (route[0][0] + 1 - t); i++){
@@ -267,6 +269,16 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
 	}
 	threat += w * corner;
 	return threat;
+}
+void newRoute(int** route, int* x, int* y, int* r, int* p, int m, int w, int t){
+	int k = route[0][0] - t;
+	int** newRt = new int* [k];
+	for(int i = 0; i <= k; i++){
+		
+	}
+	
+	// 
+	threatof(newRt, x, y, r, p, m, w, t);
 }
 double length(int startX, int startY, int endX, int endY){
 	double distance = 0;
