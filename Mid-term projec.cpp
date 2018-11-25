@@ -8,7 +8,7 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
 double length(int startX, int startY, int endX, int endY);
 bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int endY );
 void insertf(int **route,int x,int y, int endX,int endY);
-const int MAX_CHANGING = 100;
+const int MAX_CHANGING = 1000;
 int main(){
 	int n = 0; //n: size of the map
 	int m = 0; //m: number of threats
@@ -90,7 +90,7 @@ int main(){
 		for(int i = 0; i < n; i++)//still need modified
 			for(int j = 0; j < n; j++)
 				if(open[i][j] == 1){
-					cout << "(" << i << ", " << j << ") f: " << f[i][j] << " source: (" << source[i][j][0] << ", " << source[i][j][1] << ")\n";
+				//	cout << "(" << i << ", " << j << ") f: " << f[i][j] << " source: (" << source[i][j][0] << ", " << source[i][j][1] << ")\n";
 					if(f[i][j] < minf){
 						minf = f[i][j];
 						currentX = i;
@@ -158,7 +158,7 @@ int main(){
 					//if point t has better performance pass through former turn point straightly, update the source
 					for(int k = 0; k < turnCnt; k++){
 						double threatofRoute = threatof(route, x, y, r, p, m, w, k);
-						cout << "if ignore " << k << " corner " << threatofRoute << "\n";
+					//	cout << "if ignore " << k << " corner " << threatofRoute << "\n";
 						if(threatofRoute < f[currentX + i][currentY + j]){
 							f[currentX + i][currentY + j] = threatofRoute;
 							source[currentX + i][currentY + j][0] = route[turnCnt - k][0];
@@ -244,7 +244,7 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
         }
         //
         
-        if( ( i = route[0][0] - t ) )
+        if( ( i == route[0][0] - t ) )
         {
             if(i > 1)
             {
@@ -255,11 +255,11 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
             cmpntX = (route[route[0][0]+ 1][0] - route[i][0]);//culculate x component
             cmpntY = (route[route[0][0] + 1][1] - route[i][1]);
         }
-        else if (i = route[0][0] + 1)
+        else if (i == route[0][0] + 1)
         {
             if(i > 1)
             {
-                bool corTemp = turnOrNot(route[route[0][0] - t][0], route[route[0][0] - t][1], route[i][0], route[i][1], route[i + 1][0] + 1][0], route[i + 1][1]);
+                bool corTemp = turnOrNot(route[route[0][0] - t][0], route[route[0][0] - t][1], route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
                 corner += corTemp;
             }
             len = length(route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
