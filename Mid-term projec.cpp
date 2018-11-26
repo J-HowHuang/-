@@ -11,6 +11,7 @@ bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int en
 void insertf(int **route,int x,int y, int endX,int endY);
 const int MAX_CHANGING = 1000;
 int main(){
+	
 	int n = 0; //n: size of the map
 	int m = 0; //m: number of threats
 	int w = 0; //w: cost of changing direction
@@ -34,6 +35,16 @@ int main(){
 	int endX = 0, endY = 0; //the end point (endX, endY)
 	cin >> startX >> startY >> endX >> endY;
 //a* algorithm	
+	clock_t s = clock();
+	int unit = 0;
+	if(n < 300)
+		unit = n % 150 + 1;
+	else if(n < 600)
+		unit = n % 150 + 1;
+	else
+		unit = 50;
+	startX = startX + (endX - startX) % unit;
+	startY = startY + (endY - startY) % unit;
 	//create openlist(1: open, 0: close, -1: not checked)
 	int** open = new int* [n + 1];
 	for(int i = 0; i < n + 1; i++){
@@ -88,7 +99,7 @@ int main(){
 		for(int i = 0; i < n + 1; i++)//still need modified
 			for(int j = 0; j < n + 1; j++)
 				if(open[i][j] == 1){
-					cout << "(" << i << ", " << j << ") f: " << f[i][j] << " source: (" << source[i][j][0] << ", " << source[i][j][1] << ")\n";
+				//	cout << "(" << i << ", " << j << ") f: " << f[i][j] << " source: (" << source[i][j][0] << ", " << source[i][j][1] << ")\n";
 					if(f[i][j] < minf){
 						minf = f[i][j];
 						currentX = i;
@@ -96,13 +107,13 @@ int main(){
 					}
 				}
 					
- 		cout << "current position: (" << currentX << ", " << currentY << ")\n";
+ //		cout << "current position: (" << currentX << ", " << currentY << ")\n";
 		//add it into close list
 		open[currentX][currentY] = 0;
 		openCnt -= 1;
 		//for each point near it
-		for(int i = -1; i <= 1; i++)
-			for(int j = -1; j <= 1; j++){
+		for(int i = -unit; i <= unit; i += unit)
+			for(int j = -unit; j <= unit; j += unit){
 				//if it is not in neither open list or close list
 				if(currentX + i < 0 || currentY + j < 0)
 					continue;
@@ -156,7 +167,7 @@ int main(){
 					//if point t has better performance pass through former turn point straightly, update the source
 					for(int k = 0; k < turnCnt; k++){
 						double threatofRoute = threatof(route, x, y, r, p, m, w, k);
-						cout << "if ignore " << k << " corner " << threatofRoute << "\n";
+					//	cout << "if ignore " << k << " corner " << threatofRoute << "\n";
 						if(threatofRoute < f[currentX + i][currentY + j]){
 							double lng = (length(currentX + i, currentY + j, endX, endY));
 							f[currentX + i][currentY + j] = threatofRoute;
@@ -224,6 +235,8 @@ int main(){
 		cout << route[i + 1][0] << " " << route[i + 1][1] << " ";
 	}
 //	cout << threatof(route, x, y, r, p, m, w, 0);
+	clock_t e = clock();
+//	cout << "\ntime = " << e - s;
 	return 0;
 	
 }
