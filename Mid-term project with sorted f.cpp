@@ -9,7 +9,7 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
 double length(int startX, int startY, int endX, int endY);
 bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int endY );
 void insertf(int **route,int x,int y, int endX,int endY);
-const int MAX_CHANGING = 1000;
+const int MAX_CHANGING = 100;
 int main(){
 	int n = 0; //n: size of the map
 	int m = 0; //m: number of threats
@@ -35,23 +35,24 @@ int main(){
 	cin >> startX >> startY >> endX >> endY;
 //a* algorithm	
 	//create openlist(1: open, 0: close, -1: not checked)
+	double** f = new double* [(n + 1) * (n + 1)];
+	for(int i = 0; i < (n + 1) * (n + 1); i++){
+		f[i] = new double [3];
+		for(int j = 0; j < 3; j++)
+			f[i][j] = 0;
+	}
+//add start point to f list	
+	int first = 0;
+	int last = 0;
+	f[first][0] = startX;
+	f[first][1] = startY;
+	
+	//f[][] is the min. approx cost of a point
 	int** open = new int* [n + 1];
 	for(int i = 0; i < n + 1; i++){
 		open[i] = new int [n + 1];
 		for(int j = 0; j < n + 1; j++)
 			open[i][j] = -1;
-	}
-	
-//add start point to open list	
-	int openCnt = 1;
-	open[startX][startY] = 1;
-	
-	//f[][] is the min. approx cost of a point
-	double** f = new double* [n + 1];
-	for(int i = 0; i < n + 1; i++){
-		f[i] = new double [n + 1];
-		for(int j = 0; j < n + 1; j++)
-			f[i][j] = INFINITY;
 	}
 	int** originRoute = new int* [3];
 	for(int i = 0; i < 3; i++){
@@ -63,9 +64,9 @@ int main(){
 	originRoute[1][1] = startY;
 	originRoute[2][0] = endX;
 	originRoute[2][1] = endY;
-
-	f[startX][startY] = threatof(originRoute, x, y, r, p, m, w, 0);
-//	cout << threatof(originRoute, x, y, r, p, m, w, 0) << "\n";
+	
+	f[first][2] = threatof(originRoute, x, y, r, p, m, w, 0);
+	cout << threatof(originRoute, x, y, r, p, m, w, 0) << "\n";
 
 	
 	//source[][][0] is the x coordinate of the source of the point, while 1 is y
@@ -81,36 +82,29 @@ int main(){
 	source[startX][startY][0] = -1;
 	source[startX][startY][1] = -1;
 	while(true){
-		//search the point with min. approx cost in the open list
+		//search the point with min. approx cost in the f list
 		int currentX = 0;
 		int currentY = 0;
 		double minf = INFINITY;
-		for(int i = 0; i < n + 1; i++)//still need modified
-			for(int j = 0; j < n + 1; j++)
-				if(open[i][j] == 1){
-					cout << "(" << i << ", " << j << ") f: " << f[i][j] << " source: (" << source[i][j][0] << ", " << source[i][j][1] << ")\n";
-					if(f[i][j] < minf){
-						minf = f[i][j];
-						currentX = i;
-						currentY = j;
-					}
-				}
-					
+		currentX = f[first][0];
+		currentY = f[first][1];
+		if(currentX == endX && currentY == endY)
+			break;			
  		cout << "current position: (" << currentX << ", " << currentY << ")\n";
 		//add it into close list
 		open[currentX][currentY] = 0;
-		openCnt -= 1;
+		first += 1;
 		//for each point near it
 		for(int i = -1; i <= 1; i++)
 			for(int j = -1; j <= 1; j++){
-				//if it is not in neither open list or close list
+				//if it is not in neither f list or close list
 				if(currentX + i < 0 || currentY + j < 0)
 					continue;
 				if(currentX + i > n || currentY + j > n)
 					continue;
-				if(open[currentX + i][currentY + j] != 0){
-					//add it to open list
-					open[currentX + i][currentY + j] = 1;
+				if(open[currentX + i][currentY + j] == -1){
+					//add it to f list
+					
 					source[currentX + i][currentY + j][0] = currentX;
 					source[currentX + i][currentY + j][1] = currentY;
 					//calculate the f(t)
@@ -154,15 +148,38 @@ int main(){
 						route[k + 1][1] = tempRoute[turnCnt + 2 - k][1];
 					}
 					//if point t has better performance pass through former turn point straightly, update the source
+					double threatofRoute = INFINITY;
 					for(int k = 0; k < turnCnt; k++){
-						double threatofRoute = threatof(route, x, y, r, p, m, w, k);
+						double threatofIgnore = threatof(route, x, y, r, p, m, w, k);
 						cout << "if ignore " << k << " corner " << threatofRoute << "\n";
-						if(threatofRoute < f[currentX + i][currentY + j]){
+						if(threatofIgnore < threatofRoute){
 							double lng = (length(currentX + i, currentY + j, endX, endY));
-							f[currentX + i][currentY + j] = threatofRoute;
+							threatofRoute = threatofIgnore;
 							source[currentX + i][currentY + j][0] = route[turnCnt - k][0];
 							source[currentX + i][currentY + j][1] = route[turnCnt - k][1];
 						}
+					}
+					bool putLast = true;
+					for(int k = first; k < last + 1; k++){
+						if(threatofRoute < f[k][2]){
+							for(int l = last + 1; l > k; l--){
+								f[l][0] = f[l - 1][0];
+								f[l][1] = f[l - 1][1];
+								f[l][2] = f[l - 1][2];
+							}
+							f[k][0] = currentX + i;
+							f[k][1] = currentY + j;
+							f[k][2] = threatofRoute;
+							last += 1;
+							putLast = false;
+							break; 
+						}
+					}
+					if(putLast){
+						f[last + 1][0] = currentX + i;
+						f[last + 1][1] = currentY + j;
+						f[last + 1][2] = threatofRoute;
+						last += 1;
 					}
 					
 					for(int k = 0; k < MAX_CHANGING + 3; k++){
@@ -171,12 +188,11 @@ int main(){
 					}
 					delete[] tempRoute;
 					delete[] route;
+					open[currentX + i][currentY + j] = 1;
 				}
-				//if it is in open list 
-				
 			}
-		if(open[endX][endY] == 0)
-			break;
+			for(int k = 0; k < last + 1; k++)
+				cout << "(" << f[k][0] << ", " << f[k][1] << "): " << f[k][2] << "\n";
 	}
 	//trace back from t and save the route in reverse
 	int turnCnt = 0;	
@@ -223,7 +239,7 @@ int main(){
 	for(int i = 1; i < turnCnt + 1; i++){
 		cout << route[i + 1][0] << " " << route[i + 1][1] << " ";
 	}
-//	cout << threatof(route, x, y, r, p, m, w, 0);
+	cout << threatof(route, x, y, r, p, m, w, 0);
 	return 0;
 	
 }

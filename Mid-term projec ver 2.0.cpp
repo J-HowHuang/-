@@ -9,7 +9,7 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
 double length(int startX, int startY, int endX, int endY);
 bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int endY );
 void insertf(int **route,int x,int y, int endX,int endY);
-const int MAX_CHANGING = 1000;
+const int MAX_CHANGING = 100;
 int main(){
 	int n = 0; //n: size of the map
 	int m = 0; //m: number of threats
@@ -35,16 +35,18 @@ int main(){
 	cin >> startX >> startY >> endX >> endY;
 //a* algorithm	
 	//create openlist(1: open, 0: close, -1: not checked)
-	int** open = new int* [n + 1];
+	int** open = new int* [(n + 1) * (n + 1)];
 	for(int i = 0; i < n + 1; i++){
-		open[i] = new int [n + 1];
-		for(int j = 0; j < n + 1; j++)
-			open[i][j] = -1;
+		open[i] = new int [3];
+		for(int j = 0; j < 3; j++)
+			open[i][j] = 0;
 	}
 	
 //add start point to open list	
-	int openCnt = 1;
-	open[startX][startY] = 1;
+	int first = 0;
+	int last = 0;
+	open[first][0] = startX;
+	open[first][1] = startY;
 	
 	//f[][] is the min. approx cost of a point
 	double** f = new double* [n + 1];
@@ -63,8 +65,8 @@ int main(){
 	originRoute[1][1] = startY;
 	originRoute[2][0] = endX;
 	originRoute[2][1] = endY;
-
-	f[startX][startY] = threatof(originRoute, x, y, r, p, m, w, 0);
+	
+	open[first][2] = threatof(originRoute, x, y, r, p, m, w, 0);
 //	cout << threatof(originRoute, x, y, r, p, m, w, 0) << "\n";
 
 	
@@ -85,21 +87,13 @@ int main(){
 		int currentX = 0;
 		int currentY = 0;
 		double minf = INFINITY;
-		for(int i = 0; i < n + 1; i++)//still need modified
-			for(int j = 0; j < n + 1; j++)
-				if(open[i][j] == 1){
-					cout << "(" << i << ", " << j << ") f: " << f[i][j] << " source: (" << source[i][j][0] << ", " << source[i][j][1] << ")\n";
-					if(f[i][j] < minf){
-						minf = f[i][j];
-						currentX = i;
-						currentY = j;
-					}
-				}
-					
- 		cout << "current position: (" << currentX << ", " << currentY << ")\n";
+		currentX = open[first][0];
+		currentY = open[first][1];
+		if(currentX == endX && currentY == endY)
+			break;			
+ 	//	cout << "current position: (" << currentX << ", " << currentY << ")\n";
 		//add it into close list
-		open[currentX][currentY] = 0;
-		openCnt -= 1;
+		first += 1;
 		//for each point near it
 		for(int i = -1; i <= 1; i++)
 			for(int j = -1; j <= 1; j++){
@@ -110,7 +104,7 @@ int main(){
 					continue;
 				if(open[currentX + i][currentY + j] != 0){
 					//add it to open list
-					open[currentX + i][currentY + j] = 1;
+					
 					source[currentX + i][currentY + j][0] = currentX;
 					source[currentX + i][currentY + j][1] = currentY;
 					//calculate the f(t)
@@ -154,17 +148,31 @@ int main(){
 						route[k + 1][1] = tempRoute[turnCnt + 2 - k][1];
 					}
 					//if point t has better performance pass through former turn point straightly, update the source
-					for(int k = 0; k < turnCnt; k++){
-						double threatofRoute = threatof(route, x, y, r, p, m, w, k);
-						cout << "if ignore " << k << " corner " << threatofRoute << "\n";
+					double threatofRoute = threatof(route, x, y, r, p, m, w, 0);
+					for(int k = 1; k < turnCnt; k++){
+						threatofRoute = threatof(route, x, y, r, p, m, w, k);
+					//	cout << "if ignore " << k << " corner " << threatofRoute << "\n";
 						if(threatofRoute < f[currentX + i][currentY + j]){
 							double lng = (length(currentX + i, currentY + j, endX, endY));
-							f[currentX + i][currentY + j] = threatofRoute;
+							threatofRoute = threatofRoute;
 							source[currentX + i][currentY + j][0] = route[turnCnt - k][0];
 							source[currentX + i][currentY + j][1] = route[turnCnt - k][1];
 						}
 					}
-					
+					for(int k = first; k < last + 1; k++){
+						if(threatofRoute < open[k][2]){
+							for(int l = last + 1; l > k; l--){
+								open[l][0] = open[l - 1][0];
+								open[l][1] = open[l - 1][1];
+								open[l][2] = open[l - 1][2];
+							}
+							open[k][0] = currentX + i;
+							open[k][1] = currentY + j;
+							open[k][2] = threatofRoute;
+							last += 1;
+							break; 
+						}
+					}
 					for(int k = 0; k < MAX_CHANGING + 3; k++){
 						delete[] tempRoute[k];
 						delete[] route[k];
@@ -172,11 +180,7 @@ int main(){
 					delete[] tempRoute;
 					delete[] route;
 				}
-				//if it is in open list 
-				
 			}
-		if(open[endX][endY] == 0)
-			break;
 	}
 	//trace back from t and save the route in reverse
 	int turnCnt = 0;	
