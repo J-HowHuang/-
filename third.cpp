@@ -53,9 +53,9 @@ int main(){
 	if(n < 100)
 		unit = 1;
 	else if(n < 600)
-		unit = 25;
+		unit = 60;
 	else
-		unit = 50;
+		unit = 95;
 	startX = startX + (endX - startX) % unit;
 	startY = startY + (endY - startY) % unit;
 	//create openlist(1: open, 0: close, -1: not checked)
@@ -120,7 +120,7 @@ int main(){
 					}
 				}
 					
- 		cout << "current position: (" << currentX << ", " << currentY << ")\n";
+ 	//	cout << "current position: (" << currentX << ", " << currentY << ")\n";
 		//add it into close list
 		open[currentX][currentY] = 0;
 		openCnt -= 1;
@@ -128,7 +128,7 @@ int main(){
 		for(int i = -unit; i <= unit; i += unit)
 			for(int j = -unit; j <= unit; j += unit){
 				//if it is not in neither open list or close list
-				cout << "(" << currentX + i << ", " <<currentY + j << ")\n";
+			//	cout << "(" << currentX + i << ", " <<currentY + j << ")\n";
 				if(currentX + i < 0 || currentY + j < 0)
 					continue;
 				if(currentX + i > n || currentY + j > n)
@@ -180,7 +180,6 @@ int main(){
 					}
 					//if point t has better performance pass through former turn point straightly, update the source
 					for(int k = 0; k < turnCnt; k++){
-						cout << "k=" << k << "\n";
 						double threatofRoute = threatof(route, risk, x, y, r, p, m, w, k);
 					//	cout << "if ignore " << k << " corner " << threatofRoute << "\n";
 						if(threatofRoute < f[currentX + i][currentY + j]){
@@ -249,7 +248,7 @@ int main(){
 	for(int i = 1; i < turnCnt + 1; i++){
 		cout << route[i + 1][0] << " " << route[i + 1][1] << " ";
 	}
-	cout << "risk: " << threatof(route, risk, x, y, r, p, m, w, 0);
+//	cout << "risk: " << threatof(route, risk, x, y, r, p, m, w, 0);
 	clock_t e = clock();
 //	cout << "\ntime = " << e - s;
 	return 0;
@@ -310,8 +309,11 @@ double threatof(int** route, double** risk, int* x, int* y, int* r, int* p, int 
             cmpntY = (route[i + 1][1] - route[i][1]);
         }
         
-        //
-        cout << i << " ";
+        if(len == 0){
+        	threat += corner * w;
+        	return threat;
+		}
+        	
         
         double tempX = route[i][0];
         double tempY = route[i][1];
@@ -326,10 +328,6 @@ double threatof(int** route, double** risk, int* x, int* y, int* r, int* p, int 
             tempX += cmpntX / len;
             tempY += cmpntY / len;
             threat += risk[static_cast<int>(tempX)][static_cast<int>(tempY)];
-        }
-        if(i == (route[0][0] - t)){
-            i = route[0][0];
-            //cout << "\nroute[0][0] is " << route[0][0];//
         }
         //cout << "\ni is " << i;//
     }
