@@ -5,7 +5,7 @@
 using namespace std;
 
 double threatofP(double x0, double y0, int* x, int* y, int* r, int* p, int m);//threat of a point
-double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t);//threat of a route
+double threatof(int** route, double** risk, int* x, int* y, int* r, int* p, int m, int w, int t);//threat of a route
 double length(int startX, int startY, int endX, int endY);
 bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int endY );
 void insertf(int **route,int x,int y, int endX,int endY);
@@ -34,6 +34,18 @@ int main(){
 	int startX = 0, startY = 0; //the start point (startX, startY)
 	int endX = 0, endY = 0; //the end point (endX, endY)
 	cin >> startX >> startY >> endX >> endY;
+	double** risk = new double* [n + 1];
+	bool** riskCalculated = new bool* [n + 1];
+	for(int i = 0; i < n + 1; i++){
+		risk[i] = new double [n + 1];
+		riskCalculated[i] = new bool [n + 1];
+		for(int j = 0; j < n; j++)
+			riskCalculated[i][j] = 0;
+	}
+	for(int i = 0; i < n + 1; i++)
+		for(int j = 0; j < n + 1; j++){
+			risk[i][j] = threatofP(i, j, x, y, r, p, m);
+		}
 //a* algorithm	
 	clock_t s = clock();
 	//set the unit
@@ -76,7 +88,7 @@ int main(){
 	originRoute[2][0] = endX;
 	originRoute[2][1] = endY;
 
-	f[startX][startY] = threatof(originRoute, x, y, r, p, m, w, 0);
+	f[startX][startY] = threatof(originRoute, risk, x, y, r, p, m, w, 0);
 //	cout << threatof(originRoute, x, y, r, p, m, w, 0) << "\n";
 
 	
@@ -108,7 +120,7 @@ int main(){
 					}
 				}
 					
- 	//	cout << "current position: (" << currentX << ", " << currentY << ")\n";
+ 		cout << "current position: (" << currentX << ", " << currentY << ")\n";
 		//add it into close list
 		open[currentX][currentY] = 0;
 		openCnt -= 1;
@@ -116,6 +128,7 @@ int main(){
 		for(int i = -unit; i <= unit; i += unit)
 			for(int j = -unit; j <= unit; j += unit){
 				//if it is not in neither open list or close list
+				cout << "(" << currentX + i << ", " <<currentY + j << ")\n";
 				if(currentX + i < 0 || currentY + j < 0)
 					continue;
 				if(currentX + i > n || currentY + j > n)
@@ -167,7 +180,8 @@ int main(){
 					}
 					//if point t has better performance pass through former turn point straightly, update the source
 					for(int k = 0; k < turnCnt; k++){
-						double threatofRoute = threatof(route, x, y, r, p, m, w, k);
+						cout << "k=" << k << "\n";
+						double threatofRoute = threatof(route, risk, x, y, r, p, m, w, k);
 					//	cout << "if ignore " << k << " corner " << threatofRoute << "\n";
 						if(threatofRoute < f[currentX + i][currentY + j]){
 							double lng = (length(currentX + i, currentY + j, endX, endY));
@@ -235,7 +249,7 @@ int main(){
 	for(int i = 1; i < turnCnt + 1; i++){
 		cout << route[i + 1][0] << " " << route[i + 1][1] << " ";
 	}
-	cout << "risk: " << threatof(route, x, y, r, p, m, w, 0);
+	cout << "risk: " << threatof(route, risk, x, y, r, p, m, w, 0);
 	clock_t e = clock();
 //	cout << "\ntime = " << e - s;
 	return 0;
@@ -249,7 +263,7 @@ double threatofP(double x0, double y0, int* x, int* y, int* r, int* p, int m){
 			threat += p[i] * (r[i] - sqrt((x0 - x[i])*(x0 - x[i]) + (y0 - y[i])*(y0 - y[i])))/r[i];
 	return threat;
 }
-double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t){
+double threatof(int** route, double** risk, int* x, int* y, int* r, int* p, int m, int w, int t){
     double leftLen = 0, threat = 0;
     int corner = 0;
     double len = 0;
@@ -297,21 +311,21 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
         }
         
         //
-        
+        cout << i << " ";
         
         double tempX = route[i][0];
         double tempY = route[i][1];
         if(abs(leftLen) > 0.0001){
             tempX += cmpntX / len * (1 - leftLen);
             tempY += cmpntY / len * (1 - leftLen);
-            threat += threatofP(tempX, tempY, x, y, r, p, m);
+            threat += risk[static_cast<int>(tempX)][static_cast<int>(tempY)];
         }
         int intLen = static_cast<int>(len - leftLen);
         leftLen = len - intLen - leftLen;
         for(int k = 0; k < intLen ; k++){
             tempX += cmpntX / len;
             tempY += cmpntY / len;
-            threat += threatofP(tempX, tempY, x, y, r, p, m);
+            threat += risk[static_cast<int>(tempX)][static_cast<int>(tempY)];
         }
         if(i == (route[0][0] - t)){
             i = route[0][0];

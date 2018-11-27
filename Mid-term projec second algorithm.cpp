@@ -39,7 +39,7 @@ int main(){
 	//set the unit
 	int unit = 0;
 	if(n < 100)
-		unit = 1;
+		unit = 15;
 	else if(n < 600)
 		unit = 25;
 	else
@@ -165,13 +165,14 @@ int main(){
 						route[k + 1][0] = tempRoute[turnCnt + 2 - k][0];
 						route[k + 1][1] = tempRoute[turnCnt + 2 - k][1];
 					}
+					route[0][0] -= 1;
 					//if point t has better performance pass through former turn point straightly, update the source
 					for(int k = 0; k < turnCnt; k++){
 						double threatofRoute = threatof(route, x, y, r, p, m, w, k);
 					//	cout << "if ignore " << k << " corner " << threatofRoute << "\n";
 						if(threatofRoute < f[currentX + i][currentY + j]){
 							double lng = (length(currentX + i, currentY + j, endX, endY));
-							f[currentX + i][currentY + j] = threatofRoute;
+							f[currentX + i][currentY + j] = threatofRoute + lng;
 							source[currentX + i][currentY + j][0] = route[turnCnt - k][0];
 							source[currentX + i][currentY + j][1] = route[turnCnt - k][1];
 						}
@@ -256,13 +257,13 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
     double cmpntX = 0;//culculate x component
     double cmpntY = 0;
     for(int i = 1; i <= ( route[0][0] + 1 ) ; i++){
-        if( (i > ( route[0][0] - t ) ) && ( i < ( route[0][0] + 1 ) ) )
+        if( i > ( route[0][0] + 1 - t )  )
         {
             continue;
         }
         //
         
-        if( ( i == route[0][0] - t ) )
+        if( ( i == route[0][0] + 1 - t ) )
         {
             if(i > 1)
             {
@@ -273,17 +274,7 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
             cmpntX = (route[route[0][0]+ 1][0] - route[i][0]);//culculate x component
             cmpntY = (route[route[0][0] + 1][1] - route[i][1]);
         }
-        else if (i == route[0][0] + 1)
-        {
-            if(i > 1)
-            {
-                bool corTemp = turnOrNot(route[route[0][0] - t][0], route[route[0][0] - t][1], route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
-                corner += corTemp;
-            }
-            len = length(route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
-            cmpntX = (route[i + 1][0] - route[i][0]);//culculate x component
-            cmpntY = (route[i + 1][1] - route[i][1]);
-        }
+        
         else
         {
             if(i > 1)
