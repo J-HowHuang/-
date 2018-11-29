@@ -7,7 +7,7 @@ double threatofP(double x0, double y0, int* x, int* y, int* r, int* p, int m);//
 double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t);//threat of a route
 double length(int startX, int startY, int endX, int endY);
 bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int endY );
-bool goThroughWall(int* x, int* y, int r, int p, int x0, int y0);
+bool goThroughWall(int* x, int* y, int* r, int* p, int m ,int x0 , int y0);
 void insertf(int **route,int x,int y, int endX,int endY);
 void newRoute(int** route, int* x, int* y, int* r, int* p, int m, int w, int t);
 const int MAX_CHANGING = 100;
@@ -291,10 +291,18 @@ bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int en
 		return true ;
 	return false ;
 }
-bool goThroughWall(int* x, int* y, int r, int p, int x0, int y0){
-	
+bool goThroughWall(int* x , int* y , int* r , int* p , int m , int x0 , int y0){
+	for(int i = 0 ; i < m ; i++)
+	{
+		double rTemp = pow((x[i] - x0),2) + pow((y[i] - y0),2);
+		if(rTemp < pow(r[i] , 2))
+		{
+			return 1 ;
+		}
+	}
+	return 0 ;
 }
-void insertf(int **route,int x,int y, int endX,int endY){
+void insertf(int **route,int x, int y, int endX, int endY){
     for(int i = 0 ; i < MAX_CHANGING + 3 ; i++ )
     {
         if( ( route[i][0] == endX ) && ( route[i][1] == endY) )
