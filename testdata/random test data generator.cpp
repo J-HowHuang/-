@@ -20,7 +20,8 @@ int main(){
 		strcat(filename, index);
 		strcat(filename, ".txt");
 		input.open(filename, ios::out);
-		int n = rand() % 1000 + 1;
+		int n = rand();
+		n = n  % 100 + 1;
 		input << n << " ";
 		int m = static_cast<int>(sqrt(n) * 0.9 + rand() % static_cast<int>(sqrt(n) * 0.2));
 		input << m << " ";
@@ -41,7 +42,7 @@ int main(){
 		}
 		input << "\n";
 		for(int j = 0; j < m; j++){
-			input << rand() % 1000 << " ";
+			input << rand() % 100 << " ";
 		}
 		input << "\n";
 		input << 0 << " " << 0 << " " << n << " " << n;
