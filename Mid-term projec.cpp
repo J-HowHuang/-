@@ -8,6 +8,7 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
 double length(int startX, int startY, int endX, int endY);
 bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int endY );
 bool goThroughWall(int* x, int* y, int* r, int* p, int m ,int x0 , int y0);
+bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, int x1, int y1) ;
 void insertf(int **route,int x,int y, int endX,int endY);
 void newRoute(int** route, int* x, int* y, int* r, int* p, int m, int w, int t);
 const int MAX_CHANGING = 100;
@@ -273,6 +274,22 @@ bool goThroughWall(int* x , int* y , int* r , int* p , int m , int x0 , int y0){
 	{
 		double rTemp = pow((x[i] - x0),2) + pow((y[i] - y0),2);
 		if(rTemp < pow(r[i] , 2))
+		{
+			return 1 ;
+		}
+	}
+	return 0 ;
+}
+bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, int x1, int y1) ;
+{
+	double lengthPoints = length(x0 ,y0 ,x1 ,y1) ;//the distance between (x0,y0) and (x1,y1) 
+	for(int i = 0 ; i < m ; i++)
+	{
+		double length1 = length(x0 , y0 , x[i] , y[i]) ;//the distance between (x0,y0) and (x[i],y[i]) 
+		double length2 = length(x1 , y1 , x[i] , y[i]) ;//the distance between (x1,y1) and (x[i],y[i]) 
+		double s = (length1 + length2 + lengthPoints) / 2 ;
+		double rTemp = 2 * sqrt(s * (s - length1) * (s - length2) * (s - lengthPoints)) / lengthPoints ;
+		if(rTemp < r[i])
 		{
 			return 1 ;
 		}
