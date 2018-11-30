@@ -58,28 +58,29 @@ int main(){
         for(int j = 0; j < n + 1; j++)
             open[i][j] = -1;
     }
+    open[startX][startY] = 1;
     //source list
     int ***source = new int **[n + 1];
-    int ***f = new int **[n + 1];
+    double ***f = new double **[n + 1];
     for(int i = 0; i < n + 1; i++)
     {
         source[i] = new int *[n + 1];
-        f[i] = new int *[n + 1];
+        f[i] = new double *[n + 1];
         for(int j = 0; j < n + 1; j++){
             source[i][j] = new int[2];
             source[i][j][0] = startX;
             source[i][j][1] = startY;
-            f[i][j] = new int [2];// 0:f,1:g
-            f[i][j][0] = INFINITY;
+            f[i][j] = new double [2];// 0:f,1:g
+            f[i][j][0] = 9999999;
             f[i][j][1] = 0;
         }
     }
+    f[startX][startY][0] = length(startX, startY, endX, endY);
     source[startX][startY][0] = -1;
     source[startX][startY][1] = -1;
     
     
     //
-    
     while( open[endX][endY] != 0 )
     {
         int currentX = 0;
@@ -89,7 +90,7 @@ int main(){
             for(int j = 0; j < n + 1; j++)
                 if(open[i][j] == 1)
                 {
-                    //    cout << "(" << i << ", " << j << ") f: " << f[i][j] << " source: (" << source[i][j][0] << ", " << source[i][j][1] << ")\n";
+                //  cout << "(" << i << ", " << j << ") f: " << f[i][j][0] << " source: (" << source[i][j][0] << ", " << source[i][j][1] << ")\n";
                     if(f[i][j][0] < minf){
                         minf = f[i][j][0];
                         currentX = i;
@@ -97,11 +98,11 @@ int main(){
                     }
                 }
         open[currentX][currentY] = 0;
-        for(int i = -unit; i <= unit; i += unit)
-            for(int j = -unit; j <= unit; j += unit)
+        for(int i = -1; i <= 1; i += 1)
+            for(int j = -1; j <= 1; j += 1)
             {
                 //if it is not in neither open list or close list
-                //    cout << "(" << currentX + i << ", " <<currentY + j << ")\n";
+        	//	cout << "(" << currentX + i << ", " <<currentY + j << ")\n";
                 if(currentX + i < 0 || currentY + j < 0)
                     continue;
                 if(currentX + i > n || currentY + j > n)
@@ -112,19 +113,19 @@ int main(){
                     open[currentX + i][currentY + j] = 1;
                     source[currentX + i][currentY + j][0] = currentX;
                     source[currentX + i][currentY + j][1] = currentY;
-                    if(threatofP(currentX,currentY,x,y,p,m) != 0 )
+                    if(threatofP(currentX,currentY,x,y,rp,p,m) != 0 )
                     {
                         open[currentX][currentY] = 0;
                         continue;
                     }
-                    int nextsourceX = currentX;
-                    int nextsourceY = currentY;
+                    int nextsourceX = currentX + i;
+                    int nextsourceY = currentY + j;
                     int finalsourceX = 0;
                     int finalsourceY = 0;
-                    while( nextsourceX != -1 )
+                    while( source[nextsourceX][nextsourceY][0] != -1 )
                     {
                         // checking wall or not
-                        if(blocked)
+                        if(lengthGoThroughWall(x, y, rp, p, m, nextsourceX, nextsourceY, source[nextsourceX][nextsourceY][0], source[nextsourceX][nextsourceY][1]))
                         {
                             int temp = nextsourceX;
                             nextsourceX = source[nextsourceX][nextsourceY][0];
@@ -280,7 +281,7 @@ bool goThroughWall(int* x , int* y , int* r , int* p , int m , int x0 , int y0){
 	}
 	return 0 ;
 }
-bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, int x1, int y1) ;
+bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, int x1, int y1)
 {
 	double lengthPoints = length(x0 ,y0 ,x1 ,y1) ;//the distance between (x0,y0) and (x1,y1) 
 	for(int i = 0 ; i < m ; i++)
