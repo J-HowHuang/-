@@ -7,9 +7,9 @@ double threatofP(double x0, double y0, int* x, int* y, int* r, int* p, int m);//
 double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t);//threat of a route
 double length(int startX, int startY, int endX, int endY);
 bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int endY );
-bool goThroughWall(int* x, int* y, int* r, int* p, int m ,int x0 , int y0);
+bool goThroughWall(int* x, int* y, int* r, int* p, int m ,int x0 , int y0) ;
 bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, int x1, int y1) ;
-void insertf(int **route,int x,int y, int endX,int endY);
+void insertf(int **route,int x,int y, int endX,int endY) ;
 void newRoute(int** route, int* x, int* y, int* r, int* p, int m, int w, int t);
 const int MAX_CHANGING = 100;
 int main(){
@@ -289,27 +289,28 @@ bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, 
 		double cross = (x[i] - x0) * (x1 - x0) + (y[i] - y0) * (y1 - y0);//the inner product of AP and AB 
 		double distance = length(x0 , y0 , x1 , y1) ;//the distance between (x0 , y0) and (x1 , y1)
 		double unit = cross / pow(distance , 2) ;
+		double r2 = pow(r[i] , 2) ;
 		//if the included angle of AB and AP is bigger the 90 degrees 
 		if(cross <= 0) 
 		{
 			//the shortest distance between AB and P is the length of AP 
-			double rTemp = length(x0 , y0 , x[i] , y[i]) ;
-			if(rTemp < r[i])
+			double rTemp = pow((x[i] - x0),2) + pow((y[i] - y0),2) ;
+			if(rTemp < r2)
 				return 1 ;
 		}
 		//if the included angle of BA and AP is bigger the 90 degrees  
 		if(cross >= pow(distance , 2))
 		{
 			//the shortest distance between AB and P is the length of AP 
-			double rTemp = length(x1 , y1 , x[i] , y[i]) ;
-			if(rTemp < r[i])
+			double rTemp = pow((x[i] - x1),2) + pow((y[i] - y1),2) ;
+			if(rTemp < r2)
 				return 1 ;
 		}
 		//otherwise
 		double xp = x0 + (x1 - x0) * unit ;//the x coordinate of the projection point of P on AB 
 		double yp = y0 + (y1 - y0) * unit ;//the y coordinate of the projection point of P on AB
-		double rTemp = length(xp , yp , x[i] , y[i]) ;//the distance between the projection point and P 
-		if(rTemp < r[i])
+		double rTemp = pow((x[i] - xp),2) + pow((y[i] - yp),2) ; ;//the distance between the projection point and P 
+		if(rTemp < r2)
 			return 1 ;
 	} 
 	return 0 ;
