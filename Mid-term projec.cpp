@@ -283,18 +283,36 @@ bool goThroughWall(int* x , int* y , int* r , int* p , int m , int x0 , int y0){
 }
 bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, int x1, int y1)
 {
-	double lengthPoints = length(x0 ,y0 ,x1 ,y1) ;//the distance between (x0,y0) and (x1,y1) 
 	for(int i = 0 ; i < m ; i++)
 	{
-		double length1 = length(x0 , y0 , x[i] , y[i]) ;//the distance between (x0,y0) and (x[i],y[i]) 
-		double length2 = length(x1 , y1 , x[i] , y[i]) ;//the distance between (x1,y1) and (x[i],y[i]) 
-		double s = (length1 + length2 + lengthPoints) / 2 ;
-		double rTemp = 2 * sqrt(s * (s - length1) * (s - length2) * (s - lengthPoints)) / lengthPoints ;
-		if(rTemp < r[i])
+		//A(x0 , y0),B(x1 , y1),P為威脅點座標 
+		//向量AP和向量AB的內積 
+		double cross = (x[i] - x0) * (x1 - x0) + (y[i] - y0) * (y1 - y0);
+		double distance = length(x0 , y0 , x1 , y1) ;//the distance between (x0 , y0) and (x1 , y1)
+		double unit = cross / distance ;//P在AB上的單位向量 
+		//若P不在AB的垂直距離上，且AB和AP的夾角大於等於90度 
+		if(cross <= 0) 
 		{
-			return 1 ;
+			//AB和P的最短距離為AP的長度 
+			double rTemp = length(x0 , y0 , x[i] , y[i]) ;
+			if(rTemp < r[i])
+				return 1 ;
 		}
-	}
+		//若P不在AB的垂直距離上，且AB和AP的夾角小於90度 
+		if(cross >= pow(distance , 2))
+		{
+			//AB和P的最短距離為BP的長度 
+			double rTemp = length(x1 , y1 , x[i] , y[i]) ;
+			if(rTemp < r[i])
+				return 1 ;
+		}
+		//若P在AB的垂直距離上
+		double xp = x0 + (x1 - x0) * unit ;//P的投影點的x座標 
+		double yp = y0 + (y1 - y0) * unit ;//P的投影點的y座標 
+		double rTemp = length(xp , yp , x[i] , y[i]) ;//投影點到P的距離(P到AB的最短距離) 
+		if(rTemp < r[i])
+			return 1 ;
+	} 
 	return 0 ;
 }
 void insertf(int **route,int x, int y, int endX, int endY){
