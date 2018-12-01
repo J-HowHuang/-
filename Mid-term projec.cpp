@@ -299,7 +299,7 @@ bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, 
 				return 1 ;
 		}
 		//if the included angle of BA and AP is bigger the 90 degrees  
-		if(cross >= distance)
+		else if(cross >= distance)
 		{
 			//the shortest distance between AB and P is the length of AP 
 			double rTemp = pow((x[i] - x1),2) + pow((y[i] - y1),2) ;
@@ -307,11 +307,14 @@ bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, 
 				return 1 ;
 		}
 		//otherwise
-		double xp = x0 + (x1 - x0) * unit ;//the x coordinate of the projection point of P on AB 
-		double yp = y0 + (y1 - y0) * unit ;//the y coordinate of the projection point of P on AB
-		double rTemp = pow((x[i] - xp),2) + pow((y[i] - yp),2) ; ;//the distance between the projection point and P 
-		if(rTemp < r2)
-			return 1 ;
+		else
+		{
+			double xp = x0 + (x1 - x0) * unit ;//the x coordinate of the projection point of P on AB 
+			double yp = y0 + (y1 - y0) * unit ;//the y coordinate of the projection point of P on AB
+			double rTemp = pow((x[i] - xp),2) + pow((y[i] - yp),2) ; ;//the distance between the projection point and P 
+			if(rTemp < r2)
+				return 1 ;
+		}
 	} 
 	return 0 ;
 }
