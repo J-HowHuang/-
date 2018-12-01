@@ -286,10 +286,9 @@ bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, 
 	for(int i = 0 ; i < m ; i++)
 	{
 		//A(x0 , y0),B(x1 , y1),P is the threat
-		//the inner product of AP and AB 
-		double cross = (x[i] - x0) * (x1 - x0) + (y[i] - y0) * (y1 - y0);
+		double cross = (x[i] - x0) * (x1 - x0) + (y[i] - y0) * (y1 - y0);//the inner product of AP and AB 
 		double distance = length(x0 , y0 , x1 , y1) ;//the distance between (x0 , y0) and (x1 , y1)
-		double unit = cross / distance ;//the unit vector of AP project on AB  
+		double unit = cross / pow(distance , 2) ;
 		//if the included angle of AB and AP is bigger the 90 degrees 
 		if(cross <= 0) 
 		{
