@@ -3,14 +3,14 @@
 #include<cmath>
 using namespace std;
 
-double threatofP(double x0, double y0, int* x, int* y, int* r, int* p, int m);//threat of a point
-double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t);//threat of a route
+double threatofP(double x0, double y0, int* x, int* y, double* r, int* p, int m);//threat of a point
+double threatof(int** route, int* x, int* y, double* r, int* p, int m, int w, int t);//threat of a route
 double length(int startX, int startY, int endX, int endY);
 bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int endY );
-bool goThroughWall(int* x, int* y, int* r, int* p, int m ,int x0 , int y0) ;
-bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, int x1, int y1) ;
+bool goThroughWall(int* x, int* y, double* r, int* p, int m ,int x0 , int y0) ;
+bool lengthGoThroughWall(int* x, int* y, double* r, int* p, int m ,int x0, int y0, int x1, int y1) ;
 void insertf(int **route,int x,int y, int endX,int endY) ;
-void newRoute(int** route, int* x, int* y, int* r, int* p, int m, int w, int t);
+void newRoute(int** route, int* x, int* y, double* r, int* p, int m, int w, int t);
 const int MAX_CHANGING = 100;
 int main(){
 	int n = 0; //n: size of the map
@@ -21,7 +21,7 @@ int main(){
 	
 	int* x = new int [m]; //x[i]: the x-coordinate of the 'i'th threat
 	int* y = new int [m]; //y[i]: the y-coordinate of the 'i'th threat
-	int* r = new int [m]; //r[i]: the radius of the 'i'th threat
+	double* r = new double [m]; //r[i]: the radius of the 'i'th threat
 	int* p = new int [m]; //p[i]: the power of the 'i'th threat
 	for(int i = 0; i < m; i++)
 		cin >> x[i];
@@ -37,19 +37,18 @@ int main(){
 	cin >> startX >> startY >> endX >> endY;
 //algorithm start
     //remapping
-    int pmax = 0;
-    int *rp = new int [m];
+    double pmax = 0;
+    double *rp = new double [m];
     for(int i = 0 ; i < m ; i++ )
     {
         if(p[i] > pmax)
         {
             pmax = p[i];
-            
         }
     }
     for(int i = 0 ; i < m ; i++ )
     {
-        rp[i] =r[i] * ( p[i] / pmax );
+        rp[i] =r[i] * (static_cast<double> (p[i]) / pmax ) * n / (n + m);
     }
     //open list
     int** open = new int* [n + 1];
@@ -78,8 +77,6 @@ int main(){
     f[startX][startY][0] = length(startX, startY, endX, endY);
     source[startX][startY][0] = -1;
     source[startX][startY][1] = -1;
-    
-    
     //
     while( open[endX][endY] != 0 )
     {
@@ -90,34 +87,35 @@ int main(){
             for(int j = 0; j < n + 1; j++)
                 if(open[i][j] == 1)
                 {
-                //  cout << "(" << i << ", " << j << ") f: " << f[i][j][0] << " source: (" << source[i][j][0] << ", " << source[i][j][1] << ")\n";
+                cout << "(" << i << ", " << j << ") f: " << f[i][j][0] << " source: (" << source[i][j][0] << ", " << source[i][j][1] << ")\n";
                     if(f[i][j][0] < minf){
                         minf = f[i][j][0];
                         currentX = i;
                         currentY = j;
                     }
                 }
+      cout << "current position: (" << currentX << ", " <<currentY << ")\n";
         open[currentX][currentY] = 0;
         for(int i = -1; i <= 1; i += 1)
             for(int j = -1; j <= 1; j += 1)
             {
                 //if it is not in neither open list or close list
-        	//	cout << "(" << currentX + i << ", " <<currentY + j << ")\n";
                 if(currentX + i < 0 || currentY + j < 0)
                     continue;
                 if(currentX + i > n || currentY + j > n)
                     continue;
                 if(open[currentX + i][currentY + j] != 0)
-                {
+                {	
+					if(abs(threatofP(currentX + i,currentY + j,x,y,rp,p,m)) > 0.0001 )
+                    {
+                        open[currentX + i][currentY + j] = 0;
+                        continue;
+                    }
                     //add it to open list
                     open[currentX + i][currentY + j] = 1;
                     source[currentX + i][currentY + j][0] = currentX;
                     source[currentX + i][currentY + j][1] = currentY;
-                    if(threatofP(currentX,currentY,x,y,rp,p,m) != 0 )
-                    {
-                        open[currentX][currentY] = 0;
-                        continue;
-                    }
+                    
                     int nextsourceX = currentX + i;
                     int nextsourceY = currentY + j;
                     int finalsourceX = 0;
@@ -125,7 +123,7 @@ int main(){
                     while( source[nextsourceX][nextsourceY][0] != -1 )
                     {
                         // checking wall or not
-                        if(lengthGoThroughWall(x, y, rp, p, m, nextsourceX, nextsourceY, source[nextsourceX][nextsourceY][0], source[nextsourceX][nextsourceY][1]))
+                        if(lengthGoThroughWall(x, y, rp, p, m, source[nextsourceX][nextsourceY][0], source[nextsourceX][nextsourceY][1], nextsourceX, nextsourceY))
                         {
                             int temp = nextsourceX;
                             nextsourceX = source[nextsourceX][nextsourceY][0];
@@ -133,19 +131,18 @@ int main(){
                         }
                         else
                         {
-                            finalsourceX = nextsourceX;
-                            finalsourceY = nextsourceY;
-                            int tempX = source[nextsourceX][nextsourceY][0];
-	                    	int tempY = source[nextsourceX][nextsourceY][1];
-							nextsourceX = tempX;
-							nextsourceY = tempY;
+                        	cout << "AA\n";
+                            finalsourceX = source[nextsourceX][nextsourceY][0];
+                            finalsourceY = source[nextsourceX][nextsourceY][1];
+							nextsourceX = finalsourceX;
+							nextsourceY = finalsourceY;
                         }
                     }
                     source[currentX + i][currentY + j][0] = finalsourceX;
                     source[currentX + i][currentY + j][1] = finalsourceY;
-                    nextsourceX = finalsourceX;
-                    nextsourceY = finalsourceY;
-                    while(nextsourceX != -1){
+                    nextsourceX = currentX + i;
+                    nextsourceY = currentY + j;
+                    while(source[nextsourceX][nextsourceY][0] != -1){
                     	f[currentX + i][currentY + j][1] += length(nextsourceX, nextsourceY, source[nextsourceX][nextsourceY][0], source[nextsourceX][nextsourceY][1]);
                     	int tempX = source[nextsourceX][nextsourceY][0];
                     	int tempY = source[nextsourceX][nextsourceY][1];
@@ -200,25 +197,26 @@ int main(){
 	for(int i = 1; i < turnCnt + 1; i++){
 		cout << route[i + 1][0] << " " << route[i + 1][1] << " ";
 	}
+	cout << " risk: " << threatof(route, x, y, r, p, m, w, 0);
     
 
     return 0;
 }
-double threatofP(double x0, double y0, int* x, int* y, int* r, int* p, int m){
+double threatofP(double x0, double y0, int* x, int* y, double* r, int* p, int m){
 	double threat = 0;	
 	for(int i = 0; i < m; i++)
 		if((x0 - x[i]) * (x0 - x[i]) + (y0 - y[i]) * (y0 - y[i]) < r[i] * r[i])
 			threat += p[i] * (r[i] - sqrt((x0 - x[i])*(x0 - x[i]) + (y0 - y[i])*(y0 - y[i])))/r[i];
 	return threat;
 }
-double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t){
-	cout << "\nFunction is called.";//
+double threatof(int** route, int* x, int* y, double* r, int* p, int m, int w, int t){
+	//cout << "\nFunction is called.";//
 	if(t != 0)
 		newRoute(route, x, y, r, p, m, w, t);
 	double leftLen = 0, threat = 0;
 	int corner = 0;
 	for(int i = 1; i <= (route[0][0] - t) || i == (route[0][0] + 1 - t); i++){
-		cout << "\n i is " << i;//
+		//cout << "\n i is " << i;//
 		if(i > 1){
 			bool corTemp = turnOrNot(route[i - 1][0], route[i - 1][1], route[i][0], route[i][1], route[i + 1][0], route[i + 1][1]);
 			corner += corTemp;
@@ -250,7 +248,7 @@ double threatof(int** route, int* x, int* y, int* r, int* p, int m, int w, int t
 	threat += w * corner;
 	return threat;
 }
-void newRoute(int** route, int* x, int* y, int* r, int* p, int m, int w, int t){
+void newRoute(int** route, int* x, int* y, double* r, int* p, int m, int w, int t){
 	int k = route[0][0] - t;
 	int** newRt = new int* [k];
 	for(int i = 0; i <= k; i++){
@@ -270,7 +268,7 @@ bool turnOrNot(int startX , int startY , int nowX , int nowY , int endX , int en
 		return true ;
 	return false ;
 }
-bool goThroughWall(int* x , int* y , int* r , int* p , int m , int x0 , int y0){
+bool goThroughWall(int* x , int* y , double* r , int* p , int m , int x0 , int y0){
 	for(int i = 0 ; i < m ; i++)
 	{
 		double rTemp = pow((x[i] - x0),2) + pow((y[i] - y0),2);
@@ -281,12 +279,12 @@ bool goThroughWall(int* x , int* y , int* r , int* p , int m , int x0 , int y0){
 	}
 	return 0 ;
 }
-bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, int x1, int y1)
+bool lengthGoThroughWall(int* x, int* y, double* r, int* p, int m ,int x0, int y0, int x1, int y1)
 {
 	for(int i = 0 ; i < m ; i++)
 	{
 		//A(x0 , y0),B(x1 , y1),P is the threat
-		double cross = (x[i] - x0) * (x1 - x0) + (y[i] - y0) * (y1 - y0);//the inner product of AP and AB 
+		double cross = (x[i] - x0) * (x1 - x0) + (y[i] - y0) * (y1 - y0);//the inner product of AP and AB
 		double distance = length(x0 , y0 , x1 , y1) ;//the distance between (x0 , y0) and (x1 , y1)
 		double unit = cross / pow(distance , 2) ;
 		double r2 = pow(r[i] , 2) ;
@@ -295,23 +293,27 @@ bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, 
 		{
 			//the shortest distance between AB and P is the length of AP 
 			double rTemp = pow((x[i] - x0),2) + pow((y[i] - y0),2) ;
-			if(rTemp < r2)
+			if(rTemp < r2){
 				return 1 ;
+			}
 		}
-		//if the included angle of BA and AP is bigger the 90 degrees  
-		if(cross >= pow(distance , 2))
+		else if(cross >= length(x1, y1, x[i], y[i]))
 		{
 			//the shortest distance between AB and P is the length of AP 
 			double rTemp = pow((x[i] - x1),2) + pow((y[i] - y1),2) ;
-			if(rTemp < r2)
+			if(rTemp < r2){
 				return 1 ;
+			}
 		}
 		//otherwise
-		double xp = x0 + (x1 - x0) * unit ;//the x coordinate of the projection point of P on AB 
-		double yp = y0 + (y1 - y0) * unit ;//the y coordinate of the projection point of P on AB
-		double rTemp = pow((x[i] - xp),2) + pow((y[i] - yp),2) ; ;//the distance between the projection point and P 
-		if(rTemp < r2)
-			return 1 ;
+		else{
+			double xp = x0 + (x1 - x0) * unit ;//the x coordinate of the projection point of P on AB 
+			double yp = y0 + (y1 - y0) * unit ;//the y coordinate of the projection point of P on AB
+			double rTemp = pow((x[i] - xp),2) + pow((y[i] - yp),2) ; ;//the distance between the projection point and P 
+			if(rTemp < r2){
+				return 1 ;
+			}
+		}
 	} 
 	return 0 ;
 }
