@@ -286,6 +286,7 @@ bool lengthGoThroughWall(int* x, int* y, double* r, int* p, int m ,int x0, int y
 		//A(x0 , y0),B(x1 , y1),P is the threat
 		double cross = (x[i] - x0) * (x1 - x0) + (y[i] - y0) * (y1 - y0);//the inner product of AP and AB
 		double distance = length(x0 , y0 , x1 , y1) ;//the distance between (x0 , y0) and (x1 , y1)
+
 		double unit = cross / pow(distance , 2) ;
 		double r2 = pow(r[i] , 2) ;
 		//if the included angle of AB and AP is bigger the 90 degrees 
@@ -297,6 +298,7 @@ bool lengthGoThroughWall(int* x, int* y, double* r, int* p, int m ,int x0, int y
 				return 1 ;
 			}
 		}
+		//if the included angle of BA and AP is bigger the 90 degrees  
 		else if(cross >= length(x1, y1, x[i], y[i]))
 		{
 			//the shortest distance between AB and P is the length of AP 
@@ -313,7 +315,6 @@ bool lengthGoThroughWall(int* x, int* y, double* r, int* p, int m ,int x0, int y
 			if(rTemp < r2){
 				return 1 ;
 			}
-		}
 	} 
 	return 0 ;
 }
