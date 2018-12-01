@@ -290,7 +290,7 @@ bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, 
 		double cross = (x[i] - x0) * (x1 - x0) + (y[i] - y0) * (y1 - y0);
 		double distance = length(x0 , y0 , x1 , y1) ;//the distance between (x0 , y0) and (x1 , y1)
 		double unit = cross / distance ;//the unit vector of AP project on AB  
-		//if the corner of AB and AP is bigger the 90 degrees 
+		//if the included angle of AB and AP is bigger the 90 degrees 
 		if(cross <= 0) 
 		{
 			//the shortest distance between AB and P is the length of AP 
@@ -298,7 +298,7 @@ bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, 
 			if(rTemp < r[i])
 				return 1 ;
 		}
-		//if the corner of BA and AP is bigger the 90 degrees  
+		//if the included angle of BA and AP is bigger the 90 degrees  
 		if(cross >= pow(distance , 2))
 		{
 			//the shortest distance between AB and P is the length of AP 
