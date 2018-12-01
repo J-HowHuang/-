@@ -285,31 +285,31 @@ bool lengthGoThroughWall(int* x, int* y, int* r, int* p, int m ,int x0, int y0, 
 {
 	for(int i = 0 ; i < m ; i++)
 	{
-		//A(x0 , y0),B(x1 , y1),P為威脅點座標 
-		//向量AP和向量AB的內積 
+		//A(x0 , y0),B(x1 , y1),P is the threat
+		//the inner product of AP and AB 
 		double cross = (x[i] - x0) * (x1 - x0) + (y[i] - y0) * (y1 - y0);
 		double distance = length(x0 , y0 , x1 , y1) ;//the distance between (x0 , y0) and (x1 , y1)
-		double unit = cross / distance ;//P在AB上的單位向量 
-		//若P不在AB的垂直距離上，且AB和AP的夾角大於等於90度 
+		double unit = cross / distance ;//the unit vector of AP project on AB  
+		//if the corner of AB and AP is bigger the 90 degrees 
 		if(cross <= 0) 
 		{
-			//AB和P的最短距離為AP的長度 
+			//the shortest distance between AB and P is the length of AP 
 			double rTemp = length(x0 , y0 , x[i] , y[i]) ;
 			if(rTemp < r[i])
 				return 1 ;
 		}
-		//若P不在AB的垂直距離上，且AB和AP的夾角小於90度 
+		//if the corner of BA and AP is bigger the 90 degrees  
 		if(cross >= pow(distance , 2))
 		{
-			//AB和P的最短距離為BP的長度 
+			//the shortest distance between AB and P is the length of AP 
 			double rTemp = length(x1 , y1 , x[i] , y[i]) ;
 			if(rTemp < r[i])
 				return 1 ;
 		}
-		//若P在AB的垂直距離上
-		double xp = x0 + (x1 - x0) * unit ;//P的投影點的x座標 
-		double yp = y0 + (y1 - y0) * unit ;//P的投影點的y座標 
-		double rTemp = length(xp , yp , x[i] , y[i]) ;//投影點到P的距離(P到AB的最短距離) 
+		//otherwise
+		double xp = x0 + (x1 - x0) * unit ;//the x coordinate of the projection point of P on AB 
+		double yp = y0 + (y1 - y0) * unit ;//the y coordinate of the projection point of P on AB
+		double rTemp = length(xp , yp , x[i] , y[i]) ;//the distance between the projection point and P 
 		if(rTemp < r[i])
 			return 1 ;
 	} 
