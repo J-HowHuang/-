@@ -233,11 +233,41 @@ int main(){
 		route[k + 1][0] = tempRoute[turnCnt + 2 - k][0];
 		route[k + 1][1] = tempRoute[turnCnt + 2 - k][1];
 	}
-	
+    //refine
+    int correctturnCnt = 0;
+    bool cor = 0;
+    bool* route1 = new bool [MAX_CHANGING + 3];
+    for(int k = 0; k < MAX_CHANGING + 3; k++)
+    {
+        route1[k] = 0;
+    }
+    for(int i = 2 ; i < turnCnt + 2 ; i++ )
+    {
+        cor = turnOrNot(route[i-1][0], route[i-1][1], route[i][0], route[i][0], route[i+1][0], route[i+1][1]);
+        if(cor)
+        {
+            correctturnCnt++;
+            route1[i] = 1;
+        }
+    }
+    
+    
+    //
+    cout << correctturnCnt << " ";
+    for(int i = 2; i < turnCnt + 2; i++)
+    {
+        if(route1[i] == 0)
+        {
+            continue;
+        }
+        cout << route[i][0] << " " << route[i][1] << " ";
+    }
+	/*
 	cout << turnCnt << " ";
 	for(int i = 1; i < turnCnt + 1; i++){
 		cout << route[i + 1][0] << " " << route[i + 1][1] << " ";
 	}
+     */
 //	cout << "risk: " << threatof(route, x, y, r, p, m, w, 0);
 	clock_t e = clock();
 //	cout << "\ntime = " << e - s;
